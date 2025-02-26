@@ -1,15 +1,15 @@
 //
-//  ContentView.swift
+//  UserView.swift
 //  StaySafe
 //
-//  Created by Ihtasham Ali on 20/02/2025.
+//  Created by Heet Patel on 26/02/2025.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct UserView: View {
     @StateObject private var viewModel = UserViewModel()
-
+    
     var body: some View {
         VStack {
             if let user = viewModel.user {
@@ -19,14 +19,8 @@ struct ContentView: View {
                 Text("Loading...")
             }
         }
-        .padding()
         .onAppear {
-            print("ContentView appeared!") // Debugging
             viewModel.fetchUser(userID: "12345")
         }
     }
-}
-
-#Preview {
-    ContentView()
 }
