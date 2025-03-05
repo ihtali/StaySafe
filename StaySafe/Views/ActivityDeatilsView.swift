@@ -51,4 +51,3 @@ struct ActivityCreationView: View {
         .navigationTitle("Create New Activity")
     }
 }
-
