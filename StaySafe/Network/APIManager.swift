@@ -9,20 +9,17 @@ import Foundation
 
 class APIManager {
     static let shared = APIManager()
-    private let baseURL = "https://api.staysafe.com"  // Replace with actual API URL
+    private let baseURL = "https://softwarehub.uk/unibase/staysafe/v1/api"
 
-    private func request<T: Decodable>(_ endpoint: String, method: String, body: Data? = nil, completion: @escaping (Result<T, APIError>) -> Void) {
-        guard let url = URL(string: "\(baseURL)\(endpoint)") else {
+    func getUser(userID: String, completion: @escaping (Result<User, APIError>) -> Void) {
+        guard let url = URL(string: "\(baseURL)/users/\(userID)") else {
             completion(.failure(.badURL))
             return
         }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        request.httpBody = body
-
-        let task = URLSession.shared.dataTask(with: request) { data, _, error in
-            if error != nil {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Request error:", error.localizedDescription)
                 completion(.failure(.requestFailed))
                 return
             }
@@ -31,22 +28,22 @@ class APIManager {
                 completion(.failure(.requestFailed))
                 return
             }
+            
+            if let jsonString = String(data: data, encoding: .utf8) {
+                   print("Raw JSON response: \(jsonString)")
+               }
 
             do {
-                let decodedResponse = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(decodedResponse))
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase  // 🔹 Ensures correct key conversion
+                let user = try decoder.decode(User.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(user))
+                }
             } catch {
+                print("Decoding error:", error.localizedDescription)
                 completion(.failure(.decodingError))
             }
-        }
-        task.resume()
-    }
-
-    func get<T: Decodable>(_ endpoint: String, completion: @escaping (Result<T, APIError>) -> Void) {
-        request(endpoint, method: "GET", completion: completion)
-    }
-
-    func post<T: Decodable>(_ endpoint: String, body: Data, completion: @escaping (Result<T, APIError>) -> Void) {
-        request(endpoint, method: "POST", body: body, completion: completion)
+        }.resume()
     }
 }

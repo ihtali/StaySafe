@@ -1,17 +1,19 @@
-//
-//  User.swift
-//  StaySafe
-//
-//  Created by Heet Patel on 26/02/2025.
-//
-
-import Foundation
-
 struct User: Codable {
-    let userID: String
+    let userID: Int
     let firstName: String
     let lastName: String
     let phone: String
     let latitude: Double
     let longitude: Double
+    let imageURL: String? 
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "UserID"
+        case firstName = "UserFirstname"
+        case lastName = "UserLastname"
+        case phone = "UserPhone"
+        case latitude = "UserLatitude"
+        case longitude = "UserLongitude"
+        case imageURL = "UserImageURL"
+    }
 }

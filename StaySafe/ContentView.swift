@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  StaySafe
-//
-//  Created by Ihtasham Ali on 20/02/2025.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -21,8 +14,7 @@ struct ContentView: View {
         }
         .padding()
         .onAppear {
-            print("ContentView appeared!") 
-            viewModel.fetchUser(userID: "12345")
+            viewModel.fetchUser(userID: "3") // Fetch user with ID 1
         }
     }
 }
