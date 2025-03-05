@@ -21,7 +21,7 @@ struct ContentView: View {
         }
         .padding()
         .onAppear {
-            print("ContentView appeared!") // Debugging
+            print("ContentView appeared!") 
             viewModel.fetchUser(userID: "12345")
         }
     }
