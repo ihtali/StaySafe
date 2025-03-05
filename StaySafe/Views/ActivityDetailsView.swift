@@ -35,7 +35,7 @@ struct ActivityDetailsView: View {
 
             HStack {
                 Button("Edit") {
-                    // Edit action
+                    // Edit action/
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
