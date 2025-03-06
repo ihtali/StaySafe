@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct UserView: View {
+    @EnvironmentObject var userSession: UserSession
     @StateObject private var viewModel = UserViewModel()
-    
+
     var body: some View {
         VStack {
             if let user = viewModel.user {
@@ -19,8 +20,9 @@ struct UserView: View {
                 Text("Loading...")
             }
         }
+        .padding()
         .onAppear {
-            viewModel.fetchUser(userID: "12345")
+            viewModel.fetchUser(userID: userSession.userID)
         }
     }
 }

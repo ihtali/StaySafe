@@ -7,10 +7,34 @@
 
 import Foundation
 
-struct Activity: Codable {
-    let activityID: String
-    let userID: String
-    let startTime: String
-    let endTime: String?
-    let status: String
+struct Activity: Codable, Identifiable {
+    var id: Int { activityID } 
+
+    let activityID: Int
+    let name: String
+    let userID: Int
+    let description: String
+    let fromLocationID: Int
+    let fromLocationName: String
+    let leaveTime: String
+    let toLocationID: Int
+    let toLocationName: String
+    let arriveTime: String
+    let statusID: Int
+    let statusName: String
+
+    enum CodingKeys: String, CodingKey {
+        case activityID = "ActivityID"
+        case name = "ActivityName"
+        case userID = "ActivityUserID"
+        case description = "ActivityDescription"
+        case fromLocationID = "ActivityFromID"
+        case fromLocationName = "ActivityFromName"
+        case leaveTime = "ActivityLeave"
+        case toLocationID = "ActivityToID"
+        case toLocationName = "ActivityToName"
+        case arriveTime = "ActivityArrive"
+        case statusID = "ActivityStatusID"
+        case statusName = "ActivityStatusName"
+    }
 }

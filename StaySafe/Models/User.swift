@@ -1,4 +1,7 @@
-struct User: Codable {
+import Foundation
+
+struct User: Codable, Identifiable {
+    var id: Int { userID }
     let userID: Int
     let firstName: String
     let lastName: String

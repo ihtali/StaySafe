@@ -8,10 +8,21 @@
 import Foundation
 
 struct Location: Codable {
-    let locationID: String
-    let activityID: String
+    let locationID: Int
+    let name: String
+    let description: String
+    let address: String
+    let postcode: String
     let latitude: Double
     let longitude: Double
-    let timestamp: String
+
+    enum CodingKeys: String, CodingKey {
+        case locationID = "LocationID"
+        case name = "LocationName"
+        case description = "LocationDescription"
+        case address = "LocationAddress"
+        case postcode = "LocationPostcode"
+        case latitude = "LocationLatitude"
+        case longitude = "LocationLongitude"
+    }
 }
-///

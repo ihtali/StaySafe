@@ -8,6 +8,7 @@
 import Foundation
 
 class APIManager {
+    
     static let shared = APIManager()
     private let baseURL = "https://softwarehub.uk/unibase/staysafe/v1/api"
 
