@@ -8,8 +8,8 @@
 import Foundation
 
 struct Activity: Codable, Identifiable {
-    var id: Int { activityID } 
-
+    var id: Int { activityID }
+    
     let activityID: Int
     let name: String
     let userID: Int
@@ -22,7 +22,7 @@ struct Activity: Codable, Identifiable {
     let arriveTime: String
     let statusID: Int
     let statusName: String
-
+    
     enum CodingKeys: String, CodingKey {
         case activityID = "ActivityID"
         case name = "ActivityName"

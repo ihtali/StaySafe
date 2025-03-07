@@ -7,55 +7,44 @@
 import SwiftUI
 
 struct ActivityDetailsView: View {
-    var activityName: String = "Walking to Park"
-    var description: String = "Morning walk"
-    var departure: String = "Home"
-    var destination: String = "Park"
-    var departureTime: String = "10:00 AM"
-    var arrivalTime: String = "11:00 AM"
-
+    var activity: Activity  // Passed from HomeView
+    
     var body: some View {
-        VStack {
-            Form {
-                Section(header: Text("Activity Info")) {
-                    Text("Name: \(activityName)")
-                    Text("Description: \(description)")
-                    Text("Departure: \(departure)")
-                    Text("Destination: \(destination)")
-                    Text("Departure Time: \(departureTime)")
-                    Text("Arrival Time: \(arrivalTime)")
-                }
-
-                Section(header: Text("Status")) {
-                    Picker("Status", selection: .constant("Started")) {
-                        Text("Started").tag("Started")
-                        Text("Completed").tag("Completed")
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                }
-            }
-
-            HStack {
-                Button("Edit") {
-                    // Edit action
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-
-                Button("Delete") {
-                    // Delete action
-                }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.red)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+        ScrollView {  // Use ScrollView in case the content overflows
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Activity Details")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                // Displaying all the properties from the Activity struct
+                Text("Activity Name: \(activity.name)")
+                    .font(.headline)
+                
+                Text("Description: \(activity.description)")
+                    .font(.body)
+                
+                Text("From Location: \(activity.fromLocationName)")
+                    .font(.body)
+                
+                Text("Leave Time: \(activity.leaveTime)")
+                    .font(.body)
+                
+                Text("To Location: \(activity.toLocationName)")
+                    .font(.body)
+                
+                Text("Arrive Time: \(activity.arriveTime)")
+                    .font(.body)
+                
+                Text("Status: \(activity.statusName)")
+                    .font(.headline)
+                    .foregroundColor(.blue)
+                
+                Spacer()
             }
             .padding()
         }
         .navigationTitle("Activity Details")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
+

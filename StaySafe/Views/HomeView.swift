@@ -7,6 +7,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    @StateObject private var viewModel = ActivityViewModel()
+    let userID: Int = 1  // Example user ID, replace with actual user ID if needed
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -21,12 +24,36 @@ struct HomeView: View {
                 }
                 .padding()
 
-                // Activity List
-                List {
-                    ActivityRow(activityName: "Walking to Park", status: "Started", time: "10:00 AM, Today")
-                    ActivityRow(activityName: "Jogging", status: "Completed", time: "8:00 AM, Yesterday")
+                // Activity List (directly shown in HomeView)
+                if viewModel.isLoading {
+                    ProgressView("Loading activities...")
+                        .padding()
+                } else if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                } else if viewModel.activities.isEmpty {
+                    Text("No activities found.")
+                        .foregroundColor(.gray)
+                        .padding()
+                } else {
+                    List(viewModel.activities) { activity in
+                        NavigationLink(destination: ActivityDetailsView(activity: activity)) {
+                            VStack(alignment: .leading) {
+                                Text(activity.name)
+                                    .font(.headline)
+                                Text(activity.description)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("Status: \(activity.statusName)")
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
+                            }
+                            .padding(.vertical, 8)
+                        }
+                    }
+                    .padding(.top)
                 }
-                .listStyle(PlainListStyle())
 
                 // Quick Actions
                 VStack(spacing: 20) {
@@ -60,62 +87,16 @@ struct HomeView: View {
                     }
                 }
                 .padding()
-
-                // Bottom Navigation Bar
-                Spacer()
-                HStack {
-                    NavigationLink(destination: HomeView()) {
-                        VStack {
-                            Image(systemName: "house.fill")
-                            Text("Home")
-                        }
-                    }
-                    Spacer()
-                    NavigationLink(destination: ContactsView()) {
-                        VStack {
-                            Image(systemName: "person.2.fill")
-                            Text("Contacts")
-                        }
-                    }
-                    Spacer()
-                    NavigationLink(destination: MapView()) {
-                        VStack {
-                            Image(systemName: "map.fill")
-                            Text("Map")
-                        }
-                    }
-                    Spacer()
-                    NavigationLink(destination: SettingsView()) {
-                        VStack {
-                            Image(systemName: "gear")
-                            Text("Settings")
-                        }
-                    }
-                }
-                .padding()
-                .background(Color(.systemGray6))
             }
             .navigationBarHidden(true)
+            .onAppear {
+                viewModel.fetchActivities(for: userID)
+            }
         }
     }
 }
 
-struct ActivityRow: View {
-    var activityName: String
-    var status: String
-    var time: String
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(activityName)
-                .font(.headline)
-            Text(status)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-            Text(time)
-                .font(.caption)
-                .foregroundColor(.gray)
-        }
-        .padding(.vertical, 8)
-    }
+#Preview {
+    HomeView()
 }
+
