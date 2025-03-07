@@ -57,7 +57,7 @@ struct HomeView: View {
 
                 // Quick Actions
                 VStack(spacing: 20) {
-                    NavigationLink(destination: ActivityCreationView()) {
+                    NavigationLink(destination: ActivityCreationView(userID: userID)) {
                         Text("Create New Activity")
                             .frame(maxWidth: .infinity)
                             .padding()
