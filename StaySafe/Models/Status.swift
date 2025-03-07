@@ -8,7 +8,13 @@
 import Foundation
 
 struct Status: Codable {
-    let StatusID: String
-    let StatusName: String
-    let StatusOrder: Int
-  }
+    let statusID: Int
+    let name: String
+    let order: Int
+
+    enum CodingKeys: String, CodingKey {
+        case statusID = "StatusID"
+        case name = "StatusName"
+        case order = "StatusOrder"
+    }
+}

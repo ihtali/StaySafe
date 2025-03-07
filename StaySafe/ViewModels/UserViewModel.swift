@@ -20,7 +20,7 @@ class UserViewModel: ObservableObject {
                 return
             }
 
-            // 🔹 Debug: Print raw JSON response
+            // Debug: Print raw JSON response
             if let jsonString = String(data: data, encoding: .utf8) {
                 print("Raw JSON response:", jsonString)
             }
@@ -29,11 +29,11 @@ class UserViewModel: ObservableObject {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-                // 🔹 Decode as an array of Users
+                // Decode as an array of Users
                 let users = try decoder.decode([User].self, from: data)
 
                 DispatchQueue.main.async {
-                    // 🔹 Assign only the first user
+                    // Assign only the first user
                     self.user = users.first
                 }
             } catch {
