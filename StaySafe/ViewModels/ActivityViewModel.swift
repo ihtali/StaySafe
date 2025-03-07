@@ -67,4 +67,53 @@ class ActivityViewModel: ObservableObject {
             }
         }.resume()
     }
+
+    func createActivity(activity: Activity, completion: @escaping (Bool, String?) -> Void) {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities") else {
+            completion(false, "Invalid URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        do {
+            let jsonData = try JSONEncoder().encode(activity)
+            request.httpBody = jsonData
+        } catch {
+            completion(false, "Encoding error: \(error.localizedDescription)")
+            return
+        }
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(false, "Request error: \(error.localizedDescription)")
+                return
+            }
+
+            guard let data = data else {
+                completion(false, "No data received")
+                return
+            }
+
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Raw JSON response:", jsonString) // Debugging
+            }
+
+            do {
+                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                if let message = jsonResponse?["message"] as? String, message == "Activity created successfully" {
+                    DispatchQueue.main.async {
+                        self.fetchActivities(for: activity.userID) // Refresh list after creation
+                    }
+                    completion(true, nil)
+                } else {
+                    completion(false, "Failed to create activity")
+                }
+            } catch {
+                completion(false, "Decoding error: \(error.localizedDescription)")
+            }
+        }.resume()
+    }
 }
