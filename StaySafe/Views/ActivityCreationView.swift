@@ -17,9 +17,10 @@ struct ActivityCreationView: View {
     @State private var selectedFromLocationID: Int?
     @State private var selectedToLocationID: Int?
     @State private var selectedStatusID: Int?
-    @State private var leaveTime: String = ""
-    @State private var arriveTime: String = ""
+    @State private var leaveDate = Date()
+    @State private var arriveDate = Date()
     @State private var isSubmitting: Bool = false
+    @Environment(\.presentationMode) var presentationMode // For navigating back
 
     let userID: Int
 
@@ -39,7 +40,6 @@ struct ActivityCreationView: View {
                         }
                     }
 
-                    
                     Picker("To Location", selection: $selectedToLocationID) {
                         Text("Select a location").tag(nil as Int?)
                         ForEach(locationViewModel.locations, id: \.locationID) { location in
@@ -49,8 +49,8 @@ struct ActivityCreationView: View {
                 }
 
                 Section(header: Text("Time Details")) {
-                    TextField("Leave Time (YYYY-MM-DD HH:MM:SS)", text: $leaveTime)
-                    TextField("Arrive Time (YYYY-MM-DD HH:MM:SS)", text: $arriveTime)
+                    DatePicker("Leave Time", selection: $leaveDate, displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("Arrive Time", selection: $arriveDate, displayedComponents: [.date, .hourAndMinute])
                 }
 
                 Section(header: Text("Select Status")) {
@@ -80,30 +80,38 @@ struct ActivityCreationView: View {
         }
     }
 
+    func formatToISO8601(date: Date) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC time
+        return formatter.string(from: date)
+    }
+
+    func generateActivityID() -> Int {
+        return Int.random(in: 101...99999) // Generates a unique ID > 100
+    }
+
     func submitActivity() {
         guard let fromLocationID = selectedFromLocationID,
               let toLocationID = selectedToLocationID,
               let statusID = selectedStatusID,
               !name.isEmpty,
-              !description.isEmpty,
-              !leaveTime.isEmpty,
-              !arriveTime.isEmpty else {
+              !description.isEmpty else {
             return
         }
 
         isSubmitting = true
 
         let newActivity = Activity(
-            activityID: 0,
+            activityID: generateActivityID(), // Use the function to get an ID > 100
             name: name,
             userID: userID,
             description: description,
             fromLocationID: fromLocationID,
             fromLocationName: "",
-            leaveTime: leaveTime,
+            leaveTime: formatToISO8601(date: leaveDate), // Convert to correct format
             toLocationID: toLocationID,
             toLocationName: "",
-            arriveTime: arriveTime,
+            arriveTime: formatToISO8601(date: arriveDate), // Convert to correct format
             statusID: statusID,
             statusName: ""
         )
@@ -112,7 +120,7 @@ struct ActivityCreationView: View {
             DispatchQueue.main.async {
                 isSubmitting = false
                 if success {
-                    // Dismiss or show success message
+                    presentationMode.wrappedValue.dismiss() // Navigate back to HomeView
                 } else if let errorMessage = errorMessage {
                     print("Error: \(errorMessage)")
                 }
