@@ -13,16 +13,26 @@ struct UserView: View {
 
     var body: some View {
         VStack {
-            if let user = viewModel.user {
-                Text("Name: \(user.firstName) \(user.lastName)")
-                Text("Phone: \(user.phone)")
+            if viewModel.isLoading {
+                ProgressView("Loading user data...")
+            } else if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .padding()
+            } else if let user = viewModel.user {
+                VStack {
+                    Text("Name: \(user.firstName) \(user.lastName)")
+                    Text("Phone: \(user.phone)")
+                }
+                .padding()
             } else {
-                Text("Loading...")
+                Text("User not found")
+                    .foregroundColor(.gray)
             }
         }
-        .padding()
         .onAppear {
             viewModel.fetchUser(userID: userSession.userID)
         }
     }
 }
+

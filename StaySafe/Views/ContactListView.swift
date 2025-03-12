@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContactListView: View {
+    @EnvironmentObject var userSession: UserSession
     @StateObject private var contactViewModel = ContactViewModel()
 
     var body: some View {
@@ -65,7 +66,7 @@ struct ContactListView: View {
             }
             .navigationTitle("Contacts")
             .onAppear {
-                contactViewModel.fetchContacts()
+                contactViewModel.fetchContacts(userID: userSession.userID)
             }
         }
     }

@@ -19,8 +19,9 @@ struct HomeView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     Spacer()
-                    Image(systemName: "person.circle")
-                        .font(.system(size: 30))
+                    NavigationLink(destination: UserView()) { // Navigate to UserView
+                    Image(systemName: "person.circle").font(.system(size: 30))
+                    }
                 }
                 .padding()
 

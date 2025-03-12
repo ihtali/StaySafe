@@ -2,44 +2,54 @@ import Foundation
 
 class UserViewModel: ObservableObject {
     @Published var user: User?
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+    
+    private let baseURL = "https://softwarehub.uk/unibase/staysafe/v1/api"
 
     func fetchUser(userID: String) {
-        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/users/\(userID)") else {
-            print("Invalid URL")
+        guard let url = URL(string: "\(baseURL)/users/\(userID)") else {
+            errorMessage = "Invalid URL"
             return
         }
 
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Request error:", error.localizedDescription)
-                return
-            }
+        isLoading = true
+        errorMessage = nil
 
-            guard let data = data else {
-                print("No data received")
-                return
-            }
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            DispatchQueue.main.async {
+                self?.isLoading = false
 
-            // Debug: Print raw JSON response
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("Raw JSON response:", jsonString)
-            }
-
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-                // Decode as an array of Users
-                let users = try decoder.decode([User].self, from: data)
-
-                DispatchQueue.main.async {
-                    // Assign only the first user
-                    self.user = users.first
+                if let error = error {
+                    self?.errorMessage = "Request error: \(error.localizedDescription)"
+                    return
                 }
-            } catch {
-                print("Decoding error:", error)
+
+                guard let data = data else {
+                    self?.errorMessage = "No data received"
+                    return
+                }
+
+                // Debug: Print raw JSON response
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("Raw JSON response: \(jsonString)")
+                }
+
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let users = try decoder.decode([User].self, from: data) // Decode as an array
+                    
+                    if let firstUser = users.first { // Extract first user
+                        self?.user = firstUser
+                    } else {
+                        self?.errorMessage = "No user found"
+                    }
+                } catch {
+                    self?.errorMessage = "Decoding error: \(error.localizedDescription)"
+                }
+
             }
         }.resume()
     }
-
 }

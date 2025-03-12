@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct StaySafeApp: App {
+    @StateObject private var userSession = UserSession() // Single instance for the app
+
     var body: some Scene {
         WindowGroup {
-            TabNavigator()
+            ContentView()
+                .environmentObject(userSession) // Provide session to entire app
         }
     }
 }
+

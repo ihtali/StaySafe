@@ -7,47 +7,32 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var email = ""
-    @State private var password = ""
-    @State private var isLoggedIn = false
+    @EnvironmentObject var userSession: UserSession
+    @State private var enteredUserID: String = ""
 
     var body: some View {
-        if isLoggedIn {
-            HomeView()
-        } else {
-            VStack {
-                Text("Login")
-                    .font(.largeTitle)
-                    .bold()
-
-                TextField("Email", text: $email)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-
-                SecureField("Password", text: $password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-
-                Button(action: {
-                    isLoggedIn = true // Navigate to Home Page
-                }) {
-                    Text("Login")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
+        VStack {
+            Text("Welcome to StaySafe")
+                .font(.largeTitle)
                 .padding()
 
-                NavigationLink("Don't have an account? Sign Up", destination: RegistrationView())
-                    .padding()
+            TextField("Enter User ID", text: $enteredUserID)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .keyboardType(.numberPad)
+                .padding()
+
+            Button("Login") {
+                if !enteredUserID.isEmpty {
+                    userSession.userID = enteredUserID
+                    userSession.isLoggedIn = true
+                }
             }
             .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+            .disabled(enteredUserID.isEmpty) // Disable button if no userID entered
         }
+        .padding()
     }
-}
-
-#Preview {
-    LoginView()
 }

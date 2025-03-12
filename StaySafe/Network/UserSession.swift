@@ -8,8 +8,8 @@
 import Foundation
 
 class UserSession: ObservableObject {
-    @Published var userID: String = "1"
-    @Published var baseURL: String = "https://softwarehub.uk/unibase/staysafe/v1/api"
+    @Published var userID: String = "2"
+    @Published var isLoggedIn: Bool = false // Track login state
 
-    static let shared = UserSession() // Singleton instance
+    static let shared = UserSession()
 }
