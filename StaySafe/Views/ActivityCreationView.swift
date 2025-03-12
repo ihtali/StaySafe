@@ -21,8 +21,10 @@ struct ActivityCreationView: View {
     @State private var arriveDate = Date()
     @State private var isSubmitting: Bool = false
     @Environment(\.presentationMode) var presentationMode // For navigating back
+    @EnvironmentObject var userSession: UserSession
 
-    let userID: Int
+    //let userID: Int
+    
 
     var body: some View {
         NavigationView {
@@ -95,7 +97,8 @@ struct ActivityCreationView: View {
               let toLocationID = selectedToLocationID,
               let statusID = selectedStatusID,
               !name.isEmpty,
-              !description.isEmpty else {
+              !description.isEmpty,
+              let userID = Int(userSession.userID)else {
             return
         }
 
@@ -129,6 +132,6 @@ struct ActivityCreationView: View {
     }
 }
 
-#Preview {
-    ActivityCreationView(userID: 1)
-}
+//#Preview {
+//    ActivityCreationView(userID: 1)
+//}

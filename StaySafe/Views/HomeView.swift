@@ -8,7 +8,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = ActivityViewModel()
-    let userID: Int = 1  // Example user ID, replace with actual user ID if needed
+    @EnvironmentObject var userSession: UserSession
     
     var body: some View {
         NavigationView {
@@ -58,7 +58,7 @@ struct HomeView: View {
 
                 // Quick Actions
                 VStack(spacing: 20) {
-                    NavigationLink(destination: ActivityCreationView(userID: userID)) {
+                    NavigationLink(destination: ActivityCreationView()) {
                         Text("Create New Activity")
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -91,7 +91,9 @@ struct HomeView: View {
             }
             .navigationBarHidden(true)
             .onAppear {
-                viewModel.fetchActivities(for: userID)
+                if let userID = Int(userSession.userID) { // Convert String to Int safely
+                    viewModel.fetchActivities(for: userID)
+                }
             }
         }
     }
