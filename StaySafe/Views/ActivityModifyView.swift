@@ -1,30 +1,40 @@
 //
-//  ActivityCreationView.swift
+//  ActivityModifyView.swift
 //  StaySafe
 //
-//  Created by Heet Patel on 06/03/2025.
+//  Created by Heet Patel on 12/03/2025.
 //
 
 import SwiftUI
 
-struct ActivityCreationView: View {
+struct ActivityModifyView: View {
     @StateObject private var activityViewModel = ActivityViewModel()
     @StateObject private var locationViewModel = LocationViewModel()
     @StateObject private var statusViewModel = StatusViewModel()
 
-    @State private var name: String = ""
-    @State private var description: String = ""
+    @State private var name: String
+    @State private var description: String
     @State private var selectedFromLocationID: Int?
     @State private var selectedToLocationID: Int?
     @State private var selectedStatusID: Int?
-    @State private var leaveDate = Date()
-    @State private var arriveDate = Date()
+    @State private var leaveDate: Date
+    @State private var arriveDate: Date
     @State private var isSubmitting: Bool = false
-    @Environment(\.presentationMode) var presentationMode // For navigating back
+    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var userSession: UserSession
 
-    //let userID: Int
-    
+    let activity: Activity // The activity being modified
+
+    init(activity: Activity) {
+        _name = State(initialValue: activity.name)
+        _description = State(initialValue: activity.description)
+        _selectedFromLocationID = State(initialValue: activity.fromLocationID)
+        _selectedToLocationID = State(initialValue: activity.toLocationID)
+        _selectedStatusID = State(initialValue: activity.statusID)
+        _leaveDate = State(initialValue: ActivityModifyView.dateFromISO8601(activity.leaveTime))
+        _arriveDate = State(initialValue: ActivityModifyView.dateFromISO8601(activity.arriveTime))
+        self.activity = activity
+    }
 
     var body: some View {
         NavigationView {
@@ -36,7 +46,7 @@ struct ActivityCreationView: View {
 
                 Section(header: Text("Select Locations")) {
                     Picker("From Location", selection: $selectedFromLocationID) {
-                        Text("Select a location").tag(nil as Int?) // Placeholder
+                        Text("Select a location").tag(nil as Int?)
                         ForEach(locationViewModel.locations, id: \.locationID) { location in
                             Text(location.name).tag(location.locationID as Int?)
                         }
@@ -64,17 +74,17 @@ struct ActivityCreationView: View {
                     }
                 }
 
-                Button(action: submitActivity) {
+                Button(action: updateActivity) {
                     HStack {
                         if isSubmitting {
                             ProgressView()
                         }
-                        Text("Create Activity")
+                        Text("Update Activity")
                     }
                 }
                 .disabled(isSubmitting)
             }
-            .navigationTitle("Create Activity")
+            .navigationTitle("Modify Activity")
             .onAppear {
                 locationViewModel.fetchLocations()
                 statusViewModel.fetchStatuses()
@@ -82,52 +92,52 @@ struct ActivityCreationView: View {
         }
     }
 
-    func formatToISO8601(date: Date) -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.timeZone = TimeZone(secondsFromGMT: 0) // UTC time
-        return formatter.string(from: date)
-    }
-
-    func generateActivityID() -> Int {
-        return Int.random(in: 101...99999) // Generates a unique ID > 100
-    }
-
-    func submitActivity() {
+    func updateActivity() {
         guard let fromLocationID = selectedFromLocationID,
               let toLocationID = selectedToLocationID,
               let statusID = selectedStatusID,
               !name.isEmpty,
-              !description.isEmpty,
-              let userID = Int(userSession.userID)else {
+              !description.isEmpty else {
             return
         }
 
         isSubmitting = true
 
-        let newActivity = Activity(
-            activityID: generateActivityID(), // Use the function to get an ID > 100
+        let updatedActivity = Activity(
+            activityID: activity.activityID,
             name: name,
-            userID: userID,
+            userID: activity.userID,
             description: description,
             fromLocationID: fromLocationID,
             fromLocationName: "",
-            leaveTime: formatToISO8601(date: leaveDate), // Convert to correct format
+            leaveTime: ActivityModifyView.formatToISO8601(date: leaveDate),
             toLocationID: toLocationID,
             toLocationName: "",
-            arriveTime: formatToISO8601(date: arriveDate), // Convert to correct format
+            arriveTime: ActivityModifyView.formatToISO8601(date: arriveDate),
             statusID: statusID,
             statusName: ""
         )
 
-        activityViewModel.createActivity(activity: newActivity) { success, errorMessage in
+        activityViewModel.updateActivity(activity: updatedActivity) { success, errorMessage in
             DispatchQueue.main.async {
                 isSubmitting = false
                 if success {
-                    presentationMode.wrappedValue.dismiss() // Navigate back to HomeView
+                    presentationMode.wrappedValue.dismiss()
                 } else if let errorMessage = errorMessage {
                     print("Error: \(errorMessage)")
                 }
             }
         }
+    }
+
+    static func formatToISO8601(date: Date) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.string(from: date)
+    }
+
+    static func dateFromISO8601(_ isoString: String) -> Date {
+        let formatter = ISO8601DateFormatter()
+        return formatter.date(from: isoString) ?? Date()
     }
 }

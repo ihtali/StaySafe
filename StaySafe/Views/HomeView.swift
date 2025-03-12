@@ -9,7 +9,7 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = ActivityViewModel()
     @EnvironmentObject var userSession: UserSession
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -19,13 +19,13 @@ struct HomeView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     Spacer()
-                    NavigationLink(destination: UserView()) { // Navigate to UserView
-                    Image(systemName: "person.circle").font(.system(size: 30))
+                    NavigationLink(destination: UserView()) {
+                        Image(systemName: "person.circle").font(.system(size: 30))
                     }
                 }
                 .padding()
 
-                // Activity List (directly shown in HomeView)
+                // Activity List with Swipe Actions
                 if viewModel.isLoading {
                     ProgressView("Loading activities...")
                         .padding()
@@ -38,19 +38,37 @@ struct HomeView: View {
                         .foregroundColor(.gray)
                         .padding()
                 } else {
-                    List(viewModel.activities) { activity in
-                        NavigationLink(destination: ActivityDetailsView(activity: activity)) {
-                            VStack(alignment: .leading) {
-                                Text(activity.name)
-                                    .font(.headline)
-                                Text(activity.description)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                Text("Status: \(activity.statusName)")
-                                    .font(.caption)
-                                    .foregroundColor(.blue)
+                    List {
+                        ForEach(viewModel.activities) { activity in
+                            NavigationLink(destination: ActivityDetailsView(activity: activity)) {
+                                VStack(alignment: .leading) {
+                                    Text(activity.name)
+                                        .font(.headline)
+                                    Text(activity.description)
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                    Text("Status: \(activity.statusName)")
+                                        .font(.caption)
+                                        .foregroundColor(.blue)
+                                }
+                                .padding(.vertical, 8)
                             }
-                            .padding(.vertical, 8)
+                            .swipeActions(edge: .trailing) {
+                                // Modify Button
+                                Button {
+                                    navigateToModifyActivity(activity: activity)
+                                } label: {
+                                    Label("Modify", systemImage: "pencil")
+                                }
+                                .tint(.blue)
+
+                                // Delete Button
+                                Button(role: .destructive) {
+                                    deleteActivity(activityID: activity.activityID)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                         }
                     }
                     .padding(.top)
@@ -91,8 +109,29 @@ struct HomeView: View {
             }
             .navigationBarHidden(true)
             .onAppear {
-                if let userID = Int(userSession.userID) { // Convert String to Int safely
+                if let userID = Int(userSession.userID) {
                     viewModel.fetchActivities(for: userID)
+                }
+            }
+        }
+    }
+
+    // Navigate to Modify Activity
+    private func navigateToModifyActivity(activity: Activity) {
+        if let rootViewController = UIApplication.shared.windows.first?.rootViewController {
+            let modifyView = UIHostingController(rootView: ActivityModifyView(activity: activity))
+            rootViewController.present(modifyView, animated: true, completion: nil)
+        }
+    }
+
+    // Delete Activity
+    private func deleteActivity(activityID: Int) {
+        viewModel.deleteActivity(activityID: activityID) { success, errorMessage in
+            DispatchQueue.main.async {
+                if success {
+                    viewModel.activities.removeAll { $0.activityID == activityID }
+                } else if let errorMessage = errorMessage {
+                    print("Error: \(errorMessage)")
                 }
             }
         }
@@ -102,4 +141,3 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
-

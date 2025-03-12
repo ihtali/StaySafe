@@ -116,4 +116,93 @@ class ActivityViewModel: ObservableObject {
             }
         }.resume()
     }
+    
+    func deleteActivity(activityID: Int, completion: @escaping (Bool, String?) -> Void) {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities/\(activityID)") else {
+            completion(false, "Invalid URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(false, "Request error: \(error.localizedDescription)")
+                return
+            }
+
+            guard let data = data else {
+                completion(false, "No data received")
+                return
+            }
+
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Raw JSON response:", jsonString) // Debugging
+            }
+
+            do {
+                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                if let message = jsonResponse?["message"] as? String, message == "Activity deleted successfully" {
+                    DispatchQueue.main.async {
+                        self.activities.removeAll { $0.activityID == activityID } // Remove from local list
+                    }
+                    completion(true, nil)
+                } else {
+                    completion(false, "Failed to delete activity")
+                }
+            } catch {
+                completion(false, "Decoding error: \(error.localizedDescription)")
+            }
+        }.resume()
+    }
+    
+    func updateActivity(activity: Activity, completion: @escaping (Bool, String?) -> Void) {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities/\(activity.activityID)") else {
+            completion(false, "Invalid URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        do {
+            let jsonData = try JSONEncoder().encode(activity)
+            request.httpBody = jsonData
+        } catch {
+            completion(false, "Encoding error: \(error.localizedDescription)")
+            return
+        }
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(false, "Request error: \(error.localizedDescription)")
+                return
+            }
+
+            guard let data = data else {
+                completion(false, "No data received")
+                return
+            }
+
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Raw JSON response:", jsonString) // Debugging
+            }
+
+            do {
+                let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                if let message = jsonResponse?["message"] as? String, message == "Activity updated successfully" {
+                    DispatchQueue.main.async {
+                        self.fetchActivities(for: activity.userID) // Refresh list after update
+                    }
+                    completion(true, nil)
+                } else {
+                    completion(false, "Failed to update activity")
+                }
+            } catch {
+                completion(false, "Decoding error: \(error.localizedDescription)")
+            }
+        }.resume()
+    }
 }
