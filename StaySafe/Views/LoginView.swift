@@ -13,7 +13,7 @@ struct LoginView: View {
 
     var body: some View {
         if isLoggedIn {
-            HomeView()
+            TabNavigator()
         } else {
             VStack {
                 Text("Login")

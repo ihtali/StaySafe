@@ -4,10 +4,11 @@
 //
 //  Created by Heet Patel on 26/02/2025.
 //
-
 import Foundation
 
-struct Location: Codable {
+struct Location: Codable, Identifiable {
+    var id: Int { locationID } // Identifiable conformance
+
     let locationID: Int
     let name: String
     let description: String

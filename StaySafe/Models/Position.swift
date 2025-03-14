@@ -4,10 +4,11 @@
 //
 //  Created by Heet Patel on 26/02/2025.
 //
-
 import Foundation
 
-struct Position: Codable {
+struct Position: Codable, Identifiable {
+    var id: Int { positionID } // Conform to Identifiable
+
     let positionID: Int
     let activityID: Int
     let activityName: String
@@ -24,4 +25,3 @@ struct Position: Codable {
         case timestamp = "PositionTimestamp"
     }
 }
-

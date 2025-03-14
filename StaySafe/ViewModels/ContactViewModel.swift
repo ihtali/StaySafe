@@ -4,7 +4,6 @@
 //
 //  Created by Heet Patel on 06/03/2025.
 //
-
 import Foundation
 
 class ContactViewModel: ObservableObject {
@@ -29,6 +28,14 @@ class ContactViewModel: ObservableObject {
             if let error = error {
                 DispatchQueue.main.async {
                     self.errorMessage = "Request error: \(error.localizedDescription)"
+                }
+                return
+            }
+
+            // Check for valid HTTP response status code
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Server error: \(httpResponse.statusCode)"
                 }
                 return
             }

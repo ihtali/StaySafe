@@ -18,11 +18,22 @@ struct HomeView: View {
                     Text("StaySafe")
                         .font(.largeTitle)
                         .fontWeight(.bold)
+                        .foregroundColor(.white)
                     Spacer()
                     Image(systemName: "person.circle")
                         .font(.system(size: 30))
+                        .foregroundColor(.white)
                 }
                 .padding()
+                .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                .shadow(radius: 10)
+
+                // "My Activities" Title
+                Text("My Activities")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding([.top, .leading])
+                    .foregroundColor(.black)
 
                 // Activity List (directly shown in HomeView)
                 if viewModel.isLoading {
@@ -42,6 +53,7 @@ struct HomeView: View {
                             VStack(alignment: .leading) {
                                 Text(activity.name)
                                     .font(.headline)
+                                    .foregroundColor(.black)
                                 Text(activity.description)
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
@@ -49,10 +61,14 @@ struct HomeView: View {
                                     .font(.caption)
                                     .foregroundColor(.blue)
                             }
-                            .padding(.vertical, 8)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
                         }
+                        .padding(.vertical, 5)
                     }
-                    .padding(.top)
+                    .listStyle(PlainListStyle())
                 }
 
                 // Quick Actions
@@ -61,9 +77,10 @@ struct HomeView: View {
                         Text("Create New Activity")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
                             .foregroundColor(.white)
                             .cornerRadius(10)
+                            .shadow(radius: 5)
                     }
 
                     Button(action: {
@@ -75,15 +92,7 @@ struct HomeView: View {
                             .background(Color.red)
                             .foregroundColor(.white)
                             .cornerRadius(10)
-                    }
-
-                    NavigationLink(destination: MapView()) {
-                        Text("View Map")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .shadow(radius: 5)
                     }
                 }
                 .padding()
@@ -99,4 +108,3 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
-

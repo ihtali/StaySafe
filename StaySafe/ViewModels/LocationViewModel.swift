@@ -4,7 +4,6 @@
 //
 //  Created by Heet Patel on 06/03/2025.
 //
-
 import Foundation
 
 class LocationViewModel: ObservableObject {

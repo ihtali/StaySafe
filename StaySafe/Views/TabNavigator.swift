@@ -33,6 +33,7 @@ struct TabNavigator: View {
                     Text("Settings")
                 }
         }
+        .accentColor(.purple) // Customize the tab bar accent color
     }
 }
 
