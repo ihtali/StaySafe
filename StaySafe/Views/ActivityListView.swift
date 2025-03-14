@@ -45,6 +45,3 @@ struct ActivityListView: View {
     }
 }
 
-#Preview {
-    ActivityListView(userID: 1)
-}
