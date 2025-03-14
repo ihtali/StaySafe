@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct Location: Codable {
+struct Location: Codable , Identifiable {
+    var id: Int { locationID } // Conform to Identifiable
+
     let locationID: Int
     let name: String
     let description: String
