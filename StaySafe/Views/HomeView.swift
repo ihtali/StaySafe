@@ -23,7 +23,7 @@ struct HomeView: View {
                         Image(systemName: "person.circle").font(.system(size: 30))
                     }
                 }
-                .padding()
+                    .padding()
 
                 // Activity List with Swipe Actions
                 if viewModel.isLoading {
@@ -95,15 +95,6 @@ struct HomeView: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
-
-                    NavigationLink(destination: MapView()) {
-                        Text("View Map")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
                 }
                 .padding()
             }
@@ -118,7 +109,8 @@ struct HomeView: View {
 
     // Navigate to Modify Activity
     private func navigateToModifyActivity(activity: Activity) {
-        if let rootViewController = UIApplication.shared.windows.first?.rootViewController {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootViewController = windowScene.windows.first?.rootViewController {
             let modifyView = UIHostingController(rootView: ActivityModifyView(activity: activity))
             rootViewController.present(modifyView, animated: true, completion: nil)
         }

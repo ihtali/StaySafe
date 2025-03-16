@@ -15,8 +15,8 @@ struct ActivityDetailsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Header Section
-                Text("Activity Details")
+                // Activity Name Section
+                Text(activity.name)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -28,10 +28,9 @@ struct ActivityDetailsView: View {
 
                 // Activity Details Section
                 VStack(alignment: .leading, spacing: 15) {
-                    DetailRow(title: "Activity Name", value: activity.name)
                     DetailRow(title: "Description", value: activity.description)
-                    DetailRow(title: "Leave Time", value: activity.leaveTime)
-                    DetailRow(title: "Arrive Time", value: activity.arriveTime)
+                    DetailRow(title: "Leave Time", value: formatDate(activity.leaveTime))
+                    DetailRow(title: "Arrive Time", value: formatDate(activity.arriveTime))
                     DetailRow(title: "Status", value: activity.statusName, isStatus: true)
                 }
                 .padding()
@@ -40,20 +39,33 @@ struct ActivityDetailsView: View {
                 .shadow(radius: 5)
 
                 // Map Section
-                if let location = locationViewModel.locations.first(where: { $0.locationID == activity.toLocationID }) {
+                if let fromLocation = locationViewModel.locations.first(where: { $0.locationID == activity.fromLocationID }),
+                   let toLocation = locationViewModel.locations.first(where: { $0.locationID == activity.toLocationID }) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Destination Location")
+                        Text("From & To Locations")
                             .font(.headline)
                             .foregroundColor(.black)
 
-                        Map(coordinateRegion: Binding(
-                            get: { region ?? MKCoordinateRegion(
-                                center: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
-                                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-                            ) },
-                            set: { region = $0 }
-                        ), annotationItems: [location]) { location in
-                            MapMarker(coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude), tint: .blue)
+                        Map(
+                            coordinateRegion: Binding(
+                                get: { region ?? MKCoordinateRegion(
+                                    center: CLLocationCoordinate2D(
+                                        latitude: (fromLocation.latitude + toLocation.latitude) / 2,
+                                        longitude: (fromLocation.longitude + toLocation.longitude) / 2
+                                    ),
+                                    span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+                                ) },
+                                set: { region = $0 }
+                            ),
+                            annotationItems: [fromLocation, toLocation]
+                        ) { location in
+                            MapMarker(
+                                coordinate: CLLocationCoordinate2D(
+                                    latitude: location.latitude,
+                                    longitude: location.longitude
+                                ),
+                                tint: location.locationID == activity.fromLocationID ? .green : .blue
+                            )
                         }
                         .frame(height: 300)
                         .cornerRadius(10)
@@ -64,7 +76,7 @@ struct ActivityDetailsView: View {
                     .cornerRadius(10)
                     .shadow(radius: 5)
                 } else {
-                    Text("Loading location...")
+                    Text("Loading locations...")
                         .foregroundColor(.gray)
                         .padding()
                 }
@@ -76,25 +88,20 @@ struct ActivityDetailsView: View {
             locationViewModel.fetchLocations()
         }
     }
-}
 
-// Custom View for Detail Rows
-struct DetailRow: View {
-    let title: String
-    let value: String
-    var isStatus: Bool = false
+    // Function to format the date string (time first, then date)
+    private func formatDate(_ dateString: String) -> String {
+        let inputFormatter = ISO8601DateFormatter()
+        inputFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
-    var body: some View {
-        HStack {
-            Text(title)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-            Spacer()
-            Text(value)
-                .font(.body)
-                .foregroundColor(isStatus ? .blue : .black)
-                .fontWeight(isStatus ? .bold : .regular)
+        if let date = inputFormatter.date(from: dateString) {
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateFormat = "HH:mm yyyy-MM-dd" // Time first, then date
+            return outputFormatter.string(from: date)
+        } else {
+            return dateString // Return original string if parsing fails
         }
     }
 }
+
 
