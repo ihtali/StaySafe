@@ -4,7 +4,6 @@
 //
 //  Created by Heet Patel on 06/03/2025.
 //
-
 import SwiftUI
 
 struct ContactListView: View {
@@ -26,7 +25,7 @@ struct ContactListView: View {
                         .padding()
                 } else {
                     List(contactViewModel.contacts) { contact in
-                        NavigationLink(destination: ActivityListView(userID: contact.userID)) {
+                        NavigationLink(destination: ContactDetailsView(contact: contact)) {
                             HStack {
                                 if let imageUrl = contact.userImage, let url = URL(string: imageUrl) {
                                     AsyncImage(url: url) { image in
@@ -74,4 +73,5 @@ struct ContactListView: View {
 
 #Preview {
     ContactListView()
+        .environmentObject(UserSession())
 }
