@@ -16,41 +16,49 @@ struct ContactDetailsView: View {
             VStack(alignment: .leading, spacing: 20) {
                 // Contact Name Section
                 Text("\(contact.userFirstName) \(contact.userLastName)")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
-                    .cornerRadius(10)
-                    .shadow(radius: 5)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.blue, Color.purple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
 
                 // Contact Details Section
-                VStack(alignment: .leading, spacing: 15) {
+                VStack(alignment: .leading, spacing: 16) {
                     DetailRow(title: "Phone", value: contact.userPhone)
                     DetailRow(title: "Label", value: contact.userContactLabel)
                 }
                 .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .shadow(radius: 5)
+                .background(Color(.systemBackground))
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
 
                 // Activities Section
                 VStack(alignment: .leading, spacing: 20) {
                     Text("Activities")
-                        .font(.headline)
-                        .foregroundColor(.black)
-                        .padding(.top, 10)
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .foregroundColor(.primary)
 
                     if activityViewModel.isLoading {
                         ProgressView("Loading activities...")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(.gray)
                             .padding()
                     } else if let errorMessage = activityViewModel.errorMessage {
                         Text(errorMessage)
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(.red)
                             .padding()
                     } else if activityViewModel.activities.isEmpty {
                         Text("No activities found.")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(.gray)
                             .padding()
                     } else {
@@ -60,13 +68,14 @@ struct ContactDetailsView: View {
                     }
                 }
                 .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .shadow(radius: 5)
+                .background(Color(.systemBackground))
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
             }
             .padding()
         }
         .navigationTitle("Contact Details")
+        .background(Color(.systemBackground).edgesIgnoringSafeArea(.all))
         .onAppear {
             activityViewModel.fetchActivities(for: contact.userID)
         }
@@ -78,29 +87,34 @@ struct ActivityCard: View {
     let activity: Activity
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack(alignment: .leading, spacing: 16) {
             // Activity Name
             Text(activity.name)
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .padding()
                 .frame(maxWidth: .infinity)
-                .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
-                .cornerRadius(10)
-                .shadow(radius: 5)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.blue, Color.purple]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
 
             // Activity Details
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
                 DetailRow(title: "Description", value: activity.description)
                 DetailRow(title: "Leave Time", value: formatDate(activity.leaveTime))
                 DetailRow(title: "Arrive Time", value: formatDate(activity.arriveTime))
                 DetailRow(title: "Status", value: activity.statusName, isStatus: true)
             }
             .padding()
-            .background(Color.white)
-            .cornerRadius(10)
-            .shadow(radius: 5)
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
         }
     }
 
@@ -128,13 +142,12 @@ struct DetailRow: View {
     var body: some View {
         HStack {
             Text(title)
-                .font(.subheadline)
+                .font(.system(size: 16, weight: .medium, design: .rounded))
                 .foregroundColor(.gray)
             Spacer()
             Text(value)
-                .font(.body)
-                .foregroundColor(isStatus ? .blue : .black)
-                .fontWeight(isStatus ? .bold : .regular)
+                .font(.system(size: 16, weight: isStatus ? .semibold : .regular, design: .rounded))
+                .foregroundColor(isStatus ? .blue : .primary)
         }
     }
 }
