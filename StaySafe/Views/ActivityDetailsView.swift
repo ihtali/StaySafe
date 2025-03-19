@@ -1,16 +1,12 @@
-//
-//  ActivityDetailsView.swift
-//  StaySafe
-//
-//  Created by Ihtasham Ali on 05/03/2025.
-//
 import SwiftUI
 import MapKit
 
 struct ActivityDetailsView: View {
     let activity: Activity
     @StateObject private var locationViewModel = LocationViewModel()
-    @State private var region: MKCoordinateRegion? // No default value
+    @State private var region: MKCoordinateRegion?
+    @State private var showCamera = false
+    @State private var activityImageURL: URL?
 
     var body: some View {
         ScrollView {
@@ -37,6 +33,36 @@ struct ActivityDetailsView: View {
                 .background(Color.white)
                 .cornerRadius(10)
                 .shadow(radius: 5)
+
+                // Image Preview Section
+                if let imageURL = activityImageURL {
+                    VStack {
+                        Text("Activity Image")
+                            .font(.headline)
+                        Image(uiImage: loadImage(from: imageURL))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 200)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    }
+                    .padding()
+                }
+
+                // Capture Image Button
+                Button(action: {
+                    showCamera = true
+                }) {
+                    Text(activityImageURL == nil ? "Capture Image" : "Retake Image")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                }
+                .padding()
 
                 // Map Section
                 if let fromLocation = locationViewModel.locations.first(where: { $0.locationID == activity.fromLocationID }),
@@ -86,6 +112,12 @@ struct ActivityDetailsView: View {
         .navigationTitle("Activity Details")
         .onAppear {
             locationViewModel.fetchLocations()
+            loadImageForActivity()
+        }
+        .sheet(isPresented: $showCamera) {
+            CameraView { capturedURL in
+                saveImageForActivity(imageURL: capturedURL)
+            }
         }
     }
 
@@ -102,6 +134,27 @@ struct ActivityDetailsView: View {
             return dateString // Return original string if parsing fails
         }
     }
+
+    // Load image from saved URL
+    private func loadImage(from url: URL) -> UIImage {
+        guard let data = try? Data(contentsOf: url),
+              let image = UIImage(data: data) else {
+            return UIImage(systemName: "photo")! // Default placeholder
+        }
+        return image
+    }
+
+    // Load stored image for the activity
+    private func loadImageForActivity() {
+        if let savedURL = UserDefaults.standard.string(forKey: "activityImage_\(activity.activityID)"),
+           let url = URL(string: savedURL) {
+            activityImageURL = url
+        }
+    }
+
+    // Save captured image URL
+    private func saveImageForActivity(imageURL: URL) {
+        activityImageURL = imageURL
+        UserDefaults.standard.setValue(imageURL.absoluteString, forKey: "activityImage_\(activity.activityID)")
+    }
 }
-
-
