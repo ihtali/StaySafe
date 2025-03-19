@@ -101,6 +101,7 @@ class UserViewModel: ObservableObject {
             }
         }.resume()
     }
+
     
     func updateUser(userID: Int, updatedUser: User, completion: @escaping (Bool, String?) -> Void) {
         guard let url = URL(string: "\(baseURL)/users/\(userID)") else {

@@ -1,14 +1,9 @@
-//
-//  Login.swift
-//  StaySafe
-//
-//  Created by Ihtasham Ali on 28/02/2025.
-//
 import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var userSession: UserSession
     @State private var enteredUserID: String = ""
+    @State private var isNavigatingToRegistration: Bool = false
 
     var body: some View {
         VStack {
@@ -31,7 +26,19 @@ struct LoginView: View {
             .background(Color.blue)
             .foregroundColor(.white)
             .cornerRadius(8)
-            .disabled(enteredUserID.isEmpty) // Disable button if no userID entered
+            .disabled(enteredUserID.isEmpty)
+
+            Button("Register New Account") {
+                isNavigatingToRegistration = true
+            }
+            .padding()
+            .foregroundColor(.blue)
+            .background(Color.white)
+            .cornerRadius(8)
+            .sheet(isPresented: $isNavigatingToRegistration) {
+                RegistrationView()
+                    .environmentObject(userSession)
+            }
         }
         .padding()
     }
