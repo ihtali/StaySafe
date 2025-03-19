@@ -10,41 +10,46 @@ import MapKit
 struct ActivityDetailsView: View {
     let activity: Activity
     @StateObject private var locationViewModel = LocationViewModel()
-    @State private var region: MKCoordinateRegion? // No default value
+    @State private var region: MKCoordinateRegion?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Activity Name Section
                 Text(activity.name)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
-                    .cornerRadius(10)
-                    .shadow(radius: 5)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.blue, Color.purple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
 
                 // Activity Details Section
-                VStack(alignment: .leading, spacing: 15) {
+                VStack(alignment: .leading, spacing: 16) {
                     DetailRow(title: "Description", value: activity.description)
                     DetailRow(title: "Leave Time", value: formatDate(activity.leaveTime))
                     DetailRow(title: "Arrive Time", value: formatDate(activity.arriveTime))
                     DetailRow(title: "Status", value: activity.statusName, isStatus: true)
                 }
                 .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .shadow(radius: 5)
+                .background(Color(.systemBackground))
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
 
                 // Map Section
                 if let fromLocation = locationViewModel.locations.first(where: { $0.locationID == activity.fromLocationID }),
                    let toLocation = locationViewModel.locations.first(where: { $0.locationID == activity.toLocationID }) {
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 12) {
                         Text("From & To Locations")
-                            .font(.headline)
-                            .foregroundColor(.black)
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .foregroundColor(.primary)
 
                         Map(
                             coordinateRegion: Binding(
@@ -67,16 +72,16 @@ struct ActivityDetailsView: View {
                                 tint: location.locationID == activity.fromLocationID ? .green : .blue
                             )
                         }
-                        .frame(height: 300)
-                        .cornerRadius(10)
-                        .shadow(radius: 5)
+                        .frame(height: 250)
+                        .cornerRadius(12)
+                        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
                     }
                     .padding()
-                    .background(Color.white)
-                    .cornerRadius(10)
-                    .shadow(radius: 5)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
                 } else {
-                    Text("Loading locations...")
+                    ProgressView("Loading locations...")
                         .foregroundColor(.gray)
                         .padding()
                 }
@@ -103,5 +108,4 @@ struct ActivityDetailsView: View {
         }
     }
 }
-
 

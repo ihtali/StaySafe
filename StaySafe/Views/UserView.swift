@@ -22,13 +22,16 @@ struct UserView: View {
                 VStack(spacing: 20) {
                     if viewModel.isLoading {
                         ProgressView("Loading user data...")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(.gray)
                             .padding()
                     } else if let errorMessage = viewModel.errorMessage {
                         Text(errorMessage)
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(.red)
                             .padding()
                     } else if let user = user {
-                        VStack(spacing: 15) {
+                        VStack(spacing: 20) {
                             // Profile Image
                             if let imageUrl = user.imageURL, let url = URL(string: imageUrl) {
                                 AsyncImage(url: url) { image in
@@ -54,21 +57,42 @@ struct UserView: View {
                             // User Info
                             if isEditing {
                                 // Allow editing the name and phone number
-                                TextField("First Name", text: $newFirstName)
-                                    .padding()
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                TextField("Last Name", text: $newLastName)
-                                    .padding()
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                TextField("Phone", text: $newPhone)
-                                    .padding()
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                VStack(spacing: 16) {
+                                    TextField("First Name", text: $newFirstName)
+                                        .padding()
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                        )
+
+                                    TextField("Last Name", text: $newLastName)
+                                        .padding()
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                        )
+
+                                    TextField("Phone", text: $newPhone)
+                                        .padding()
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                        )
+                                }
+                                .padding(.horizontal, 24)
                             } else {
                                 Text("\(user.firstName) \(user.lastName)")
-                                    .font(.largeTitle)
-                                    .fontWeight(.bold)
+                                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                                    .foregroundColor(.primary)
+
                                 Text(user.phone)
-                                    .font(.subheadline)
+                                    .font(.system(size: 16, weight: .medium, design: .rounded))
                                     .foregroundColor(.gray)
                             }
 
@@ -96,9 +120,6 @@ struct UserView: View {
                                             
                                             // Fetch the updated user data
                                             viewModel.fetchUser(userID: String(user.userID))
-                                            
-                                            // You may also want to update the local user object directly here to avoid waiting for the fetch
-                                           
                                         } else {
                                             print(errorMessage ?? "Update failed")
                                         }
@@ -112,31 +133,35 @@ struct UserView: View {
                                 }
                             }) {
                                 Text(isEditing ? "Save Changes" : "Edit")
+                                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                                     .frame(maxWidth: .infinity)
                                     .padding()
                                     .background(isEditing ? Color.green : Color.blue)
                                     .foregroundColor(.white)
-                                    .cornerRadius(10)
+                                    .cornerRadius(12)
+                                    .shadow(color: isEditing ? .green.opacity(0.3) : .blue.opacity(0.3), radius: 5, x: 0, y: 3)
                             }
-                            .padding(.top)
-
+                            .padding(.horizontal, 24)
 
                             // Delete Button
                             Button(action: {
                                 deleteUser()
                             }) {
                                 Text("Delete")
+                                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                                     .frame(maxWidth: .infinity)
                                     .padding()
                                     .background(Color.red)
                                     .foregroundColor(.white)
-                                    .cornerRadius(10)
+                                    .cornerRadius(12)
+                                    .shadow(color: .red.opacity(0.3), radius: 5, x: 0, y: 3)
                             }
-                            .padding(.top)
+                            .padding(.horizontal, 24)
                         }
                         .padding()
                     } else {
                         Text("User not found")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(.gray)
                             .padding()
                     }
@@ -144,6 +169,8 @@ struct UserView: View {
                 .padding()
             }
             .navigationTitle("Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .background(Color(.systemBackground).edgesIgnoringSafeArea(.all))
             .onAppear {
                 viewModel.fetchUser(userID: userSession.userID)
             }
