@@ -4,10 +4,11 @@ import MessageUI
 struct HomeView: View {
     @StateObject private var viewModel = ActivityViewModel()
     @EnvironmentObject var userSession: UserSession
+    @StateObject private var locationManager = LocationManager()
     @State private var showMessageComposer = false
-    @State private var messageError: String?
+    @State private var messageError: ErrorMessage?
 
-    let emergencyContacts = ["+447923629056", "+447747260083", "+447561117779"] 
+    let emergencyContacts = ["+447923629056", "+447747260083", "+447561117779", "+447868200949"]
 
     var body: some View {
         NavigationView {
@@ -104,7 +105,10 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $showMessageComposer) {
-                MessageComposer(recipients: emergencyContacts, body: "Emergency! I need help.")
+                MessageComposer(recipients: emergencyContacts, body: "Emergency! I need help. My location: \(locationManager.locationString)")
+            }
+            .alert(item: $messageError) { error in
+                Alert(title: Text("Error"), message: Text(error.message), dismissButton: .default(Text("OK")))
             }
         }
     }
@@ -114,7 +118,7 @@ struct HomeView: View {
         if MFMessageComposeViewController.canSendText() {
             showMessageComposer = true
         } else {
-            messageError = "Your device doesn't support text messaging."
+            messageError = ErrorMessage(message: "Your device doesn't support text messaging.")
         }
     }
 
@@ -139,9 +143,4 @@ struct HomeView: View {
             }
         }
     }
-}
-
-
-#Preview {
-    HomeView()
 }
