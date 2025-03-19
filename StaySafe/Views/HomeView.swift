@@ -1,14 +1,13 @@
-//
-//  HomeView.swift
-//  StaySafe
-//
-//  Created by Ihtasham Ali on 28/02/2025.
-//
 import SwiftUI
+import MessageUI
 
 struct HomeView: View {
     @StateObject private var viewModel = ActivityViewModel()
     @EnvironmentObject var userSession: UserSession
+    @State private var showMessageComposer = false
+    @State private var messageError: String?
+
+    let emergencyContacts = ["+447923629056", "+447747260083"] // Replace with actual numbers
 
     var body: some View {
         NavigationView {
@@ -23,7 +22,7 @@ struct HomeView: View {
                         Image(systemName: "person.circle").font(.system(size: 30))
                     }
                 }
-                    .padding()
+                .padding()
 
                 // Activity List with Swipe Actions
                 if viewModel.isLoading {
@@ -86,7 +85,7 @@ struct HomeView: View {
                     }
 
                     Button(action: {
-                        // Panic button action
+                        sendPanicMessage()
                     }) {
                         Text("Panic Button")
                             .frame(maxWidth: .infinity)
@@ -104,6 +103,18 @@ struct HomeView: View {
                     viewModel.fetchActivities(for: userID)
                 }
             }
+            .sheet(isPresented: $showMessageComposer) {
+                MessageComposer(recipients: emergencyContacts, body: "Emergency! I need help.")
+            }
+        }
+    }
+
+    // Function to trigger Panic Message
+    func sendPanicMessage() {
+        if MFMessageComposeViewController.canSendText() {
+            showMessageComposer = true
+        } else {
+            messageError = "Your device doesn't support text messaging."
         }
     }
 
@@ -129,6 +140,7 @@ struct HomeView: View {
         }
     }
 }
+
 
 #Preview {
     HomeView()
