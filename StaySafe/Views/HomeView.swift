@@ -7,7 +7,7 @@ struct HomeView: View {
     @State private var showMessageComposer = false
     @State private var messageError: String?
 
-    let emergencyContacts = ["+447923629056", "+447747260083"] // Replace with actual numbers
+    let emergencyContacts = ["+447923629056", "+447747260083", "+447561117779"] 
 
     var body: some View {
         NavigationView {
