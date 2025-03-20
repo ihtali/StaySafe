@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Contact: Codable, Identifiable {
+struct Contact: Codable, Identifiable , Equatable {
     var id: Int {
         userID
     }
