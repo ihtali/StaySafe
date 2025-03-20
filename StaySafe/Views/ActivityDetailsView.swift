@@ -1,39 +1,34 @@
-//
-//  ActivityDetailsView.swift
-//  StaySafe
-//
-//  Created by Heet Patel on 20/03/2025.
-//
-
 import SwiftUI
 import MapKit
- 
+
 struct ActivityDetailsView: View {
     let activity: Activity
     @StateObject private var locationViewModel = LocationViewModel()
     @State private var region: MKCoordinateRegion?
+    @State private var showCamera = false
+    @State private var activityImageURL: URL?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // Activity Name Section
                 Text(activity.name)
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.blue, Color.purple]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.blue, Color.purple]),
+                        startPoint: .leading,
+                        endPoint: .trailing
                     )
-                    .cornerRadius(12)
-                    .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
+                )
+                .cornerRadius(12)
+                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
 
                 // Activity Details Section
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 15) {
                     DetailRow(title: "Description", value: activity.description)
                     DetailRow(title: "Leave Time", value: formatDate(activity.leaveTime))
                     DetailRow(title: "Arrive Time", value: formatDate(activity.arriveTime))
@@ -44,18 +39,45 @@ struct ActivityDetailsView: View {
                 .cornerRadius(12)
                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
 
- 
+                // Image Preview Section
+                if let imageURL = activityImageURL {
+                    VStack {
+                        Text("Activity Image")
+                            .font(.headline)
+                        Image(uiImage: loadImage(from: imageURL))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 200)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    }
+                    .padding()
+                }
+
+                // Capture Image Button
+                Button(action: {
+                    showCamera = true
+                }) {
+                    Text(activityImageURL == nil ? "Capture Image" : "Retake Image")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .shadow(radius: 5)
+                }
+                .padding()
 
                 // Map Section
                 if let fromLocation = locationViewModel.locations.first(where: { $0.locationID == activity.fromLocationID }),
                    let toLocation = locationViewModel.locations.first(where: { $0.locationID == activity.toLocationID }) {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text("From & To Locations")
-                            .font(.system(size: 18, weight: .semibold, design: .rounded))
-                            .foregroundColor(.primary)
+                            .font(.headline)
+                            .foregroundColor(.black)
 
- 
-           Map(
+                        Map(
                             coordinateRegion: Binding(
                                 get: { region ?? MKCoordinateRegion(
                                     center: CLLocationCoordinate2D(
@@ -85,7 +107,7 @@ struct ActivityDetailsView: View {
                     .cornerRadius(12)
                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
                 } else {
-                    ProgressView("Loading locations...")
+                    Text("Loading locations...")
                         .foregroundColor(.gray)
                         .padding()
                 }
@@ -95,14 +117,20 @@ struct ActivityDetailsView: View {
         .navigationTitle("Activity Details")
         .onAppear {
             locationViewModel.fetchLocations()
+            loadImageForActivity()
+        }
+        .sheet(isPresented: $showCamera) {
+            CameraView { capturedURL in
+                saveImageForActivity(imageURL: capturedURL)
+            }
         }
     }
- 
+
     // Function to format the date string (time first, then date)
     private func formatDate(_ dateString: String) -> String {
         let inputFormatter = ISO8601DateFormatter()
         inputFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
- 
+
         if let date = inputFormatter.date(from: dateString) {
             let outputFormatter = DateFormatter()
             outputFormatter.dateFormat = "HH:mm yyyy-MM-dd" // Time first, then date
@@ -111,5 +139,27 @@ struct ActivityDetailsView: View {
             return dateString // Return original string if parsing fails
         }
     }
-}
 
+    // Load image from saved URL
+    private func loadImage(from url: URL) -> UIImage {
+        guard let data = try? Data(contentsOf: url),
+              let image = UIImage(data: data) else {
+            return UIImage(systemName: "photo")! // Default placeholder
+        }
+        return image
+    }
+
+    // Load stored image for the activity
+    private func loadImageForActivity() {
+        if let savedURL = UserDefaults.standard.string(forKey: "activityImage_\(activity.activityID)"),
+           let url = URL(string: savedURL) {
+            activityImageURL = url
+        }
+    }
+
+    // Save captured image URL
+    private func saveImageForActivity(imageURL: URL) {
+        activityImageURL = imageURL
+        UserDefaults.standard.setValue(imageURL.absoluteString, forKey: "activityImage_\(activity.activityID)")
+    }
+}
