@@ -1,17 +1,15 @@
-import Foundation
-
-struct User: Codable, Identifiable {
+struct User: Codable, Identifiable, Equatable {
     var id: Int { userID }
     let userID: Int
-    let firstName: String
-    let lastName: String
-    let phone: String
+    var firstName: String
+    var lastName: String
+    var phone: String
     let latitude: Double
     let longitude: Double
     let imageURL: String?
     let username: String
-    let password: String
-    let timestamp: Int  // Ensure this is provided when sending request
+    var password: String? // Make this mutable
+    let timestamp: Int
 
     enum CodingKeys: String, CodingKey {
         case userID = "UserID"

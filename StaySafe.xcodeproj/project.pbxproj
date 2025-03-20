@@ -10,22 +10,9 @@
 		AA7F344B2D67863700BEDE0E /* StaySafe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StaySafe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		01DF64D72D8B25E400CD524E /* Exceptions for "StaySafe" folder in "StaySafe" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = AA7F344A2D67863700BEDE0E /* StaySafe */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AA7F344D2D67863700BEDE0E /* StaySafe */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				01DF64D72D8B25E400CD524E /* Exceptions for "StaySafe" folder in "StaySafe" target */,
-			);
 			path = StaySafe;
 			sourceTree = "<group>";
 		};
@@ -265,14 +252,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"StaySafe/Preview Content\"";
-				DEVELOPMENT_TEAM = N9MQ6THXB6;
+				DEVELOPMENT_TEAM = QBY87Z8F8M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+
 				INFOPLIST_FILE = StaySafe/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need to access your location";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need to add to your library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to use your photo library";
+
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -299,14 +288,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"StaySafe/Preview Content\"";
-				DEVELOPMENT_TEAM = N9MQ6THXB6;
+				DEVELOPMENT_TEAM = QBY87Z8F8M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+
 				INFOPLIST_FILE = StaySafe/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need to access your location";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need to add to your library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to use your photo library";
+
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -12,7 +12,7 @@ struct ActivityDetailsView: View {
     let activity: Activity
     @StateObject private var locationViewModel = LocationViewModel()
     @State private var region: MKCoordinateRegion?
- 
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -31,7 +31,7 @@ struct ActivityDetailsView: View {
                     )
                     .cornerRadius(12)
                     .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
- 
+
                 // Activity Details Section
                 VStack(alignment: .leading, spacing: 16) {
                     DetailRow(title: "Description", value: activity.description)
@@ -43,7 +43,9 @@ struct ActivityDetailsView: View {
                 .background(Color(.systemBackground))
                 .cornerRadius(12)
                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
+
  
+
                 // Map Section
                 if let fromLocation = locationViewModel.locations.first(where: { $0.locationID == activity.fromLocationID }),
                    let toLocation = locationViewModel.locations.first(where: { $0.locationID == activity.toLocationID }) {
@@ -51,8 +53,9 @@ struct ActivityDetailsView: View {
                         Text("From & To Locations")
                             .font(.system(size: 18, weight: .semibold, design: .rounded))
                             .foregroundColor(.primary)
+
  
-                        Map(
+           Map(
                             coordinateRegion: Binding(
                                 get: { region ?? MKCoordinateRegion(
                                     center: CLLocationCoordinate2D(
@@ -109,3 +112,4 @@ struct ActivityDetailsView: View {
         }
     }
 }
+
