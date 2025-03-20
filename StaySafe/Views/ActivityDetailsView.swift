@@ -2,11 +2,12 @@
 //  ActivityDetailsView.swift
 //  StaySafe
 //
-//  Created by Ihtasham Ali on 05/03/2025.
+//  Created by Heet Patel on 20/03/2025.
 //
+
 import SwiftUI
 import MapKit
-
+ 
 struct ActivityDetailsView: View {
     let activity: Activity
     @StateObject private var locationViewModel = LocationViewModel()
@@ -43,6 +44,8 @@ struct ActivityDetailsView: View {
                 .cornerRadius(12)
                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
 
+ 
+
                 // Map Section
                 if let fromLocation = locationViewModel.locations.first(where: { $0.locationID == activity.fromLocationID }),
                    let toLocation = locationViewModel.locations.first(where: { $0.locationID == activity.toLocationID }) {
@@ -51,7 +54,8 @@ struct ActivityDetailsView: View {
                             .font(.system(size: 18, weight: .semibold, design: .rounded))
                             .foregroundColor(.primary)
 
-                        Map(
+ 
+           Map(
                             coordinateRegion: Binding(
                                 get: { region ?? MKCoordinateRegion(
                                     center: CLLocationCoordinate2D(
@@ -93,12 +97,12 @@ struct ActivityDetailsView: View {
             locationViewModel.fetchLocations()
         }
     }
-
+ 
     // Function to format the date string (time first, then date)
     private func formatDate(_ dateString: String) -> String {
         let inputFormatter = ISO8601DateFormatter()
         inputFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
+ 
         if let date = inputFormatter.date(from: dateString) {
             let outputFormatter = DateFormatter()
             outputFormatter.dateFormat = "HH:mm yyyy-MM-dd" // Time first, then date

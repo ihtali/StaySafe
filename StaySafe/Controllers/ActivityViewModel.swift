@@ -12,6 +12,8 @@ class ActivityViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
 
+    private let imageStorageKey = "activityImages"
+
     func fetchActivities(for userID: Int) {
         guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities/users/\(userID)") else {
             errorMessage = "Invalid URL"
@@ -204,5 +206,21 @@ class ActivityViewModel: ObservableObject {
                 completion(false, "Decoding error: \(error.localizedDescription)")
             }
         }.resume()
+    }
+    
+// Function to save image URL for an activity
+    func saveImage(for activityID: Int, imageURL: String) {
+        var storedImages = fetchImages(for: activityID) // Get existing images
+        storedImages.append(imageURL) // Add new image
+        
+        var allImages = UserDefaults.standard.dictionary(forKey: imageStorageKey) as? [String: [String]] ?? [:]
+        allImages[String(activityID)] = storedImages
+        UserDefaults.standard.setValue(allImages, forKey: imageStorageKey)
+    }
+
+    // Function to fetch all images for a given activity ID
+    func fetchImages(for activityID: Int) -> [String] {
+        let allImages = UserDefaults.standard.dictionary(forKey: imageStorageKey) as? [String: [String]] ?? [:]
+        return allImages[String(activityID)] ?? []
     }
 }
