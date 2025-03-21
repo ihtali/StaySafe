@@ -11,7 +11,6 @@ struct ActivityCreationView: View {
     @StateObject private var activityViewModel = ActivityViewModel()
     @StateObject private var locationViewModel = LocationViewModel()
     @StateObject private var statusViewModel = StatusViewModel()
-
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var selectedFromLocationID: Int?

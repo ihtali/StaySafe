@@ -115,17 +115,16 @@ struct UserView: View {
                                     
                                     viewModel.updateUser(userID: user.userID, updatedUser: updatedUser) { success, errorMessage in
                                         if success {
-                                            // Exit editing mode and dismiss the editing UI
+                                            
                                             isEditing = false
                                             
-                                            // Fetch the updated user data
                                             viewModel.fetchUser(userID: String(user.userID))
                                         } else {
                                             print(errorMessage ?? "Update failed")
                                         }
                                     }
                                 } else {
-                                    // Start editing
+
                                     newFirstName = user.firstName
                                     newLastName = user.lastName
                                     newPhone = user.phone // Populate the phone number field
@@ -134,12 +133,12 @@ struct UserView: View {
                             }) {
                                 Text(isEditing ? "Save Changes" : "Edit")
                                     .font(.system(size: 18, weight: .semibold, design: .rounded))
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(isEditing ? Color.green : Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(12)
-                                    .shadow(color: isEditing ? .green.opacity(0.3) : .blue.opacity(0.3), radius: 5, x: 0, y: 3)
+                                                            .frame(maxWidth: .infinity)
+                                                            .padding()
+                                                            .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                                                            .foregroundColor(.white)
+                                                            .cornerRadius(12)
+                                                            .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                             }
                             .padding(.horizontal, 24)
 
@@ -149,12 +148,12 @@ struct UserView: View {
                             }) {
                                 Text("Delete")
                                     .font(.system(size: 18, weight: .semibold, design: .rounded))
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.red)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(12)
-                                    .shadow(color: .red.opacity(0.3), radius: 5, x: 0, y: 3)
+                                                            .frame(maxWidth: .infinity)
+                                                            .padding()
+                                                            .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.red]), startPoint: .leading, endPoint: .trailing))
+                                                            .foregroundColor(.white)
+                                                            .cornerRadius(12)
+                                                            .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                             }
                             .padding(.horizontal, 24)
                         }

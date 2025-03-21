@@ -43,12 +43,12 @@ struct LoginView: View {
                 }) {
                     Text("Login")
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(enteredUserID.isEmpty ? Color.gray : Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .shadow(color: .blue.opacity(0.2), radius: 5, x: 0, y: 3)
+                                                .frame(maxWidth: .infinity)
+                                                .padding()
+                                                .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
+                                                .foregroundColor(.white)
+                                                .cornerRadius(12)
+                                                .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 .disabled(enteredUserID.isEmpty)
                 .padding(.horizontal, 24)
