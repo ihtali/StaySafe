@@ -29,7 +29,8 @@ struct HomeView: View {
                 .padding(.top, 16)
                 .background(Color(.systemBackground))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-
+                Spacer(minLength: 16)
+                
                 // Activity List with Swipe Actions
                 if viewModel.isLoading {
                     ProgressView("Loading activities...")
@@ -40,9 +41,17 @@ struct HomeView: View {
                         .foregroundColor(.red)
                         .padding()
                 } else if viewModel.activities.isEmpty {
-                    Text("No activities found.")
-                        .foregroundColor(.gray)
-                        .padding()
+                    VStack {
+                        Image(systemName: "tray.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                            .foregroundColor(.gray.opacity(0.5))
+                        Text("No activities found.")
+                            .foregroundColor(.gray)
+                            .padding()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
                         ForEach(viewModel.activities) { activity in
@@ -50,15 +59,13 @@ struct HomeView: View {
                                 ActivityRow(activity: activity)
                             }
                             .swipeActions(edge: .trailing) {
-                                // Modify Button
                                 Button {
                                     navigateToModifyActivity(activity: activity)
                                 } label: {
                                     Label("Modify", systemImage: "pencil")
                                 }
                                 .tint(.blue)
-
-                                // Delete Button
+                                
                                 Button(role: .destructive) {
                                     deleteActivity(activityID: activity.activityID)
                                 } label: {
@@ -66,15 +73,11 @@ struct HomeView: View {
                                 }
                             }
                         }
-                        .listRowBackground(Color(.secondarySystemBackground))
                     }
-                    .listStyle(.plain)
-                    .padding(.top, 8)
                 }
-
+                
                 // Quick Actions
                 VStack(spacing: 20) {
-                    // Create New Activity Button
                     NavigationLink(destination: ActivityCreationView()) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
@@ -89,8 +92,7 @@ struct HomeView: View {
                         .cornerRadius(12)
                         .shadow(color: .blue.opacity(0.4), radius: 8, x: 0, y: 4)
                     }
-
-                    // Panic Button
+                    
                     Button(action: {
                         sendPanicMessage()
                     }) {
@@ -126,7 +128,6 @@ struct HomeView: View {
         }
     }
 
-    // Function to trigger Panic Message
     func sendPanicMessage() {
         if MFMessageComposeViewController.canSendText() {
             showMessageComposer = true
@@ -134,8 +135,7 @@ struct HomeView: View {
             messageError = ErrorMessage(message: "Your device doesn't support text messaging.")
         }
     }
-
-    // Navigate to Modify Activity
+    
     private func navigateToModifyActivity(activity: Activity) {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let rootViewController = windowScene.windows.first?.rootViewController {
@@ -143,8 +143,7 @@ struct HomeView: View {
             rootViewController.present(modifyView, animated: true, completion: nil)
         }
     }
-
-    // Delete Activity
+    
     private func deleteActivity(activityID: Int) {
         viewModel.deleteActivity(activityID: activityID) { success, errorMessage in
             DispatchQueue.main.async {
@@ -158,7 +157,6 @@ struct HomeView: View {
     }
 }
 
-// Custom Activity Row View
 struct ActivityRow: View {
     let activity: Activity
 
@@ -174,10 +172,6 @@ struct ActivityRow: View {
                 .font(.caption)
                 .foregroundColor(.blue)
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 8)
-        .background(Color(.systemBackground))
-        .cornerRadius(10)
-        .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 2)
+       
     }
 }

@@ -37,7 +37,6 @@ struct ContactListView: View {
                             .listRowBackground(Color(.systemBackground))
                         }
                     }
-                    .listStyle(.plain)
                     .background(Color(.systemBackground))
                 }
             }
