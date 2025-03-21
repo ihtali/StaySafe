@@ -13,24 +13,6 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Text("StaySafe")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
-                    Spacer()
-                    NavigationLink(destination: UserView()) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 28))
-                            .foregroundColor(.blue)
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.top, 16)
-                .background(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-                Spacer(minLength: 16)
-                
                 // Activity List with Swipe Actions
                 if viewModel.isLoading {
                     ProgressView("Loading activities...")
@@ -75,7 +57,7 @@ struct HomeView: View {
                         }
                     }
                 }
-                
+
                 // Quick Actions
                 VStack(spacing: 20) {
                     NavigationLink(destination: ActivityCreationView()) {
@@ -92,7 +74,7 @@ struct HomeView: View {
                         .cornerRadius(12)
                         .shadow(color: .blue.opacity(0.4), radius: 8, x: 0, y: 4)
                     }
-                    
+
                     Button(action: {
                         sendPanicMessage()
                     }) {
@@ -104,7 +86,7 @@ struct HomeView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(LinearGradient(gradient: Gradient(colors: [Color.red.opacity(0.8), Color.orange.opacity(0.8)]), startPoint: .leading, endPoint: .trailing))
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.red.opacity(1), Color.orange.opacity(0.8)]), startPoint: .leading, endPoint: .trailing))
                         .foregroundColor(.white)
                         .cornerRadius(12)
                         .shadow(color: .red.opacity(0.4), radius: 8, x: 0, y: 4)
@@ -113,7 +95,21 @@ struct HomeView: View {
                 .padding()
                 .background(Color(.systemBackground))
             }
-            .navigationBarHidden(true)
+            .navigationTitle("My Activities")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("StaySafe")
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        .foregroundColor(.blue)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: UserView()) {
+                        Image(systemName: "person.circle.fill")
+                            .font(.system(size: 28))
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
             .onAppear {
                 if let userID = Int(userSession.userID) {
                     viewModel.fetchActivities(for: userID)
@@ -172,6 +168,5 @@ struct ActivityRow: View {
                 .font(.caption)
                 .foregroundColor(.blue)
         }
-       
     }
 }

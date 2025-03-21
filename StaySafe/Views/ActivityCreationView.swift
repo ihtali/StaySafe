@@ -26,58 +26,56 @@ struct ActivityCreationView: View {
     
 
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Activity Details")) {
-                    TextField("Activity Name", text: $name)
-                    TextField("Description", text: $description)
-                }
-
-                Section(header: Text("Select Locations")) {
-                    Picker("From Location", selection: $selectedFromLocationID) {
-                        Text("Select a location").tag(nil as Int?) // Placeholder
-                        ForEach(locationViewModel.locations, id: \.locationID) { location in
-                            Text(location.name).tag(location.locationID as Int?)
-                        }
-                    }
-
-                    Picker("To Location", selection: $selectedToLocationID) {
-                        Text("Select a location").tag(nil as Int?)
-                        ForEach(locationViewModel.locations, id: \.locationID) { location in
-                            Text(location.name).tag(location.locationID as Int?)
-                        }
-                    }
-                }
-
-                Section(header: Text("Time Details")) {
-                    DatePicker("Leave Time", selection: $leaveDate, displayedComponents: [.date, .hourAndMinute])
-                    DatePicker("Arrive Time", selection: $arriveDate, displayedComponents: [.date, .hourAndMinute])
-                }
-
-                Section(header: Text("Select Status")) {
-                    Picker("Status", selection: $selectedStatusID) {
-                        Text("Select a status").tag(nil as Int?)
-                        ForEach(statusViewModel.statuses, id: \.statusID) { status in
-                            Text(status.name).tag(status.statusID as Int?)
-                        }
-                    }
-                }
-
-                Button(action: submitActivity) {
-                    HStack {
-                        if isSubmitting {
-                            ProgressView()
-                        }
-                        Text("Create Activity")
-                    }
-                }
-                .disabled(isSubmitting)
+        Form {
+            Section(header: Text("Activity Details")) {
+                TextField("Activity Name", text: $name)
+                TextField("Description", text: $description)
             }
-            .navigationTitle("Create Activity")
-            .onAppear {
-                locationViewModel.fetchLocations()
-                statusViewModel.fetchStatuses()
+
+            Section(header: Text("Select Locations")) {
+                Picker("From Location", selection: $selectedFromLocationID) {
+                    Text("Select a location").tag(nil as Int?) // Placeholder
+                    ForEach(locationViewModel.locations, id: \.locationID) { location in
+                        Text(location.name).tag(location.locationID as Int?)
+                    }
+                }
+
+                Picker("To Location", selection: $selectedToLocationID) {
+                    Text("Select a location").tag(nil as Int?)
+                    ForEach(locationViewModel.locations, id: \.locationID) { location in
+                        Text(location.name).tag(location.locationID as Int?)
+                    }
+                }
             }
+
+            Section(header: Text("Time Details")) {
+                DatePicker("Leave Time", selection: $leaveDate, displayedComponents: [.date, .hourAndMinute])
+                DatePicker("Arrive Time", selection: $arriveDate, displayedComponents: [.date, .hourAndMinute])
+            }
+
+            Section(header: Text("Select Status")) {
+                Picker("Status", selection: $selectedStatusID) {
+                    Text("Select a status").tag(nil as Int?)
+                    ForEach(statusViewModel.statuses, id: \.statusID) { status in
+                        Text(status.name).tag(status.statusID as Int?)
+                    }
+                }
+            }
+
+            Button(action: submitActivity) {
+                HStack {
+                    if isSubmitting {
+                        ProgressView()
+                    }
+                    Text("Create Activity")
+                }
+            }
+            .disabled(isSubmitting)
+        }
+        .navigationTitle("Create Activity")
+        .onAppear {
+            locationViewModel.fetchLocations()
+            statusViewModel.fetchStatuses()
         }
     }
 

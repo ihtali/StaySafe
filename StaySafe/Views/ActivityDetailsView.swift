@@ -75,7 +75,7 @@ struct ActivityDetailsView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("From & To Locations")
                             .font(.headline)
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
 
                         Map(
                             coordinateRegion: Binding(

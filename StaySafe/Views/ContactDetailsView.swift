@@ -57,11 +57,19 @@ struct ContactDetailsView: View {
                             .foregroundColor(.red)
                             .padding()
                     } else if activityViewModel.activities.isEmpty {
-                        Text("No activities found.")
-                            .font(.system(size: 16, weight: .medium, design: .rounded))
-                            .foregroundColor(.gray)
-                            .padding()
+                        VStack {
+                            Image(systemName: "tray.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .foregroundColor(.gray.opacity(0.5))
+                            Text("No activities found.")
+                                .foregroundColor(.gray)
+                                .padding()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
+                        
                         ForEach(activityViewModel.activities) { activity in
                             NavigationLink(destination: ActivityDetailsView(activity: activity)) {
                                 ActivityCard(activity: activity)
