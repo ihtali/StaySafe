@@ -20,12 +20,18 @@ struct ContactDetailsView: View {
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.blue)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.blue, Color.purple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .cornerRadius(12)
                     .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
 
                 // Contact Details Section
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 15) {
                     DetailRow(title: "Phone", value: contact.userPhone)
                     DetailRow(title: "Label", value: contact.userContactLabel)
                 }
@@ -57,7 +63,9 @@ struct ContactDetailsView: View {
                             .padding()
                     } else {
                         ForEach(activityViewModel.activities) { activity in
-                            ActivityCard(activity: activity)
+                            NavigationLink(destination: ActivityDetailsView(activity: activity)) {
+                                ActivityCard(activity: activity)
+                            }
                         }
                     }
                 }
@@ -75,7 +83,6 @@ struct ContactDetailsView: View {
         }
     }
 }
-
 // Activity Card View (Reusable Component)
 struct ActivityCard: View {
     let activity: Activity

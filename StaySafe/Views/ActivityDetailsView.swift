@@ -13,19 +13,19 @@ struct ActivityDetailsView: View {
             VStack(alignment: .leading, spacing: 20) {
                 // Activity Name Section
                 Text(activity.name)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.blue, Color.purple]),
-                        startPoint: .leading,
-                        endPoint: .trailing
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.blue, Color.purple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
-                )
-                .cornerRadius(12)
-                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
+                    .cornerRadius(12)
+                    .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 3)
 
                 // Activity Details Section
                 VStack(alignment: .leading, spacing: 15) {
@@ -90,13 +90,22 @@ struct ActivityDetailsView: View {
                             ),
                             annotationItems: [fromLocation, toLocation]
                         ) { location in
-                            MapMarker(
-                                coordinate: CLLocationCoordinate2D(
-                                    latitude: location.latitude,
-                                    longitude: location.longitude
-                                ),
-                                tint: location.locationID == activity.fromLocationID ? .green : .blue
-                            )
+                            MapAnnotation(coordinate: CLLocationCoordinate2D(
+                                latitude: location.latitude,
+                                longitude: location.longitude
+                            )) {
+                                VStack {
+                                    Text(location.name)
+                                        .font(.caption)
+                                        .padding(5)
+                                        .background(Color.white)
+                                        .cornerRadius(5)
+                                        .shadow(radius: 3)
+                                    Image(systemName: "mappin.circle.fill")
+                                        .foregroundColor(location.locationID == activity.fromLocationID ? .green : .blue)
+                                        .font(.title)
+                                }
+                            }
                         }
                         .frame(height: 250)
                         .cornerRadius(12)
