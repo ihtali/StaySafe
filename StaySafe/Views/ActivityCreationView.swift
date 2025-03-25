@@ -4,26 +4,24 @@
 //
 //  Created by Heet Patel on 06/03/2025.
 //
-
 import SwiftUI
 
 struct ActivityCreationView: View {
     @StateObject private var activityViewModel = ActivityViewModel()
     @StateObject private var locationViewModel = LocationViewModel()
     @StateObject private var statusViewModel = StatusViewModel()
+    @StateObject private var modeViewModel = ModeViewModel() // ViewModel for travel modes
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var selectedFromLocationID: Int?
     @State private var selectedToLocationID: Int?
     @State private var selectedStatusID: Int?
+    @State private var selectedModeID: Int?
     @State private var leaveDate = Date()
     @State private var arriveDate = Date()
     @State private var isSubmitting: Bool = false
     @Environment(\.presentationMode) var presentationMode // For navigating back
     @EnvironmentObject var userSession: UserSession
-
-    //let userID: Int
-    
 
     var body: some View {
         Form {
@@ -34,7 +32,7 @@ struct ActivityCreationView: View {
 
             Section(header: Text("Select Locations")) {
                 Picker("From Location", selection: $selectedFromLocationID) {
-                    Text("Select a location").tag(nil as Int?) // Placeholder
+                    Text("Select a location").tag(nil as Int?)
                     ForEach(locationViewModel.locations, id: \.locationID) { location in
                         Text(location.name).tag(location.locationID as Int?)
                     }
@@ -61,6 +59,15 @@ struct ActivityCreationView: View {
                     }
                 }
             }
+            
+            Section(header: Text("Select Mode of Travel")) {
+                Picker("Mode", selection: $selectedModeID) {
+                    Text("Select a mode").tag(nil as Int?)
+                    ForEach(modeViewModel.modes, id: \.modeID) { mode in
+                        Text(mode.name).tag(mode.modeID as Int?)
+                    }
+                }
+            }
 
             Button(action: submitActivity) {
                 HStack {
@@ -76,6 +83,7 @@ struct ActivityCreationView: View {
         .onAppear {
             locationViewModel.fetchLocations()
             statusViewModel.fetchStatuses()
+            modeViewModel.fetchModes() // Fetch available travel modes
         }
     }
 
@@ -93,9 +101,11 @@ struct ActivityCreationView: View {
         guard let fromLocationID = selectedFromLocationID,
               let toLocationID = selectedToLocationID,
               let statusID = selectedStatusID,
+              let modeID = selectedModeID,
+              let mode = modeViewModel.modes.first(where: { $0.modeID == modeID }),
               !name.isEmpty,
               !description.isEmpty,
-              let userID = Int(userSession.userID)else {
+              let userID = Int(userSession.userID) else {
             return
         }
 
@@ -112,6 +122,8 @@ struct ActivityCreationView: View {
             toLocationID: toLocationID,
             toLocationName: "",
             arriveTime: formatToISO8601(date: arriveDate), // Convert to correct format
+            modeID: mode.modeID, // Pass selected mode ID
+            modeName: mode.name, // Pass selected mode name
             statusID: statusID,
             statusName: ""
         )
