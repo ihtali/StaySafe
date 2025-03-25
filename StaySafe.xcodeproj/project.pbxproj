@@ -271,6 +271,7 @@
 				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need to access your location";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need to track your motion";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need to add to your library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to use your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -305,6 +306,7 @@
 				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need to access your camera";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need to access your location";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need to track your motion";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need to add to your library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need to use your photo library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

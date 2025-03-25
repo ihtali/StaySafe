@@ -20,6 +20,8 @@ struct Activity: Codable, Identifiable {
     let toLocationID: Int
     let toLocationName: String
     let arriveTime: String
+    let modeID: Int
+    let modeName: String
     let statusID: Int
     let statusName: String
     
@@ -34,6 +36,8 @@ struct Activity: Codable, Identifiable {
         case toLocationID = "ActivityToID"
         case toLocationName = "ActivityToName"
         case arriveTime = "ActivityArrive"
+        case modeID = "ActivityModeID"
+        case modeName = "ActivityModeName"
         case statusID = "ActivityStatusID"
         case statusName = "ActivityStatusName"
     }

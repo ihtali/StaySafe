@@ -114,6 +114,8 @@ struct ActivityModifyView: View {
             toLocationID: toLocationID,
             toLocationName: "",
             arriveTime: ActivityModifyView.formatToISO8601(date: arriveDate),
+            modeID: 1, // Default to 0 or nil (whichever the backend expects)
+            modeName: "Walking",
             statusID: statusID,
             statusName: ""
         )
