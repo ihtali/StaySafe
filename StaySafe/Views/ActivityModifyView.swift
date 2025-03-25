@@ -4,20 +4,19 @@
 //
 //  Created by Heet Patel on 12/03/2025.
 //
+
 import SwiftUI
 
 struct ActivityModifyView: View {
     @StateObject private var activityViewModel = ActivityViewModel()
     @StateObject private var locationViewModel = LocationViewModel()
     @StateObject private var statusViewModel = StatusViewModel()
-    @StateObject private var modeViewModel = ModeViewModel() // ViewModel for modes
 
     @State private var name: String
     @State private var description: String
     @State private var selectedFromLocationID: Int?
     @State private var selectedToLocationID: Int?
     @State private var selectedStatusID: Int?
-    @State private var selectedModeID: Int?
     @State private var leaveDate: Date
     @State private var arriveDate: Date
     @State private var isSubmitting: Bool = false
@@ -32,7 +31,6 @@ struct ActivityModifyView: View {
         _selectedFromLocationID = State(initialValue: activity.fromLocationID)
         _selectedToLocationID = State(initialValue: activity.toLocationID)
         _selectedStatusID = State(initialValue: activity.statusID)
-        _selectedModeID = State(initialValue: activity.modeID) // Initialize modeID
         _leaveDate = State(initialValue: ActivityModifyView.dateFromISO8601(activity.leaveTime))
         _arriveDate = State(initialValue: ActivityModifyView.dateFromISO8601(activity.arriveTime))
         self.activity = activity
@@ -75,15 +73,6 @@ struct ActivityModifyView: View {
                         }
                     }
                 }
-                
-                Section(header: Text("Select Mode of Travel")) {
-                    Picker("Mode", selection: $selectedModeID) {
-                        Text("Select a mode").tag(nil as Int?)
-                        ForEach(modeViewModel.modes, id: \.modeID) { mode in
-                            Text(mode.name).tag(mode.modeID as Int?)
-                        }
-                    }
-                }
 
                 Button(action: updateActivity) {
                     HStack {
@@ -99,7 +88,6 @@ struct ActivityModifyView: View {
             .onAppear {
                 locationViewModel.fetchLocations()
                 statusViewModel.fetchStatuses()
-                modeViewModel.fetchModes() // Fetch available modes
             }
         }
     }
@@ -108,8 +96,6 @@ struct ActivityModifyView: View {
         guard let fromLocationID = selectedFromLocationID,
               let toLocationID = selectedToLocationID,
               let statusID = selectedStatusID,
-              let modeID = selectedModeID,
-              let mode = modeViewModel.modes.first(where: { $0.modeID == modeID }),
               !name.isEmpty,
               !description.isEmpty else {
             return
@@ -128,11 +114,10 @@ struct ActivityModifyView: View {
             toLocationID: toLocationID,
             toLocationName: "",
             arriveTime: ActivityModifyView.formatToISO8601(date: arriveDate),
-           modeID: mode.modeID, // Pass selected mode ID
-            modeName: mode.name, // Pass selected mode name
+            modeID: 1, // Default to 0 or nil (whichever the backend expects)
+            modeName: "Walking",
             statusID: statusID,
             statusName: ""
-
         )
 
         activityViewModel.updateActivity(activity: updatedActivity) { success, errorMessage in

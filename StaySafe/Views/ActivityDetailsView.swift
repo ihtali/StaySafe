@@ -1,12 +1,22 @@
+//
+//  ActivityDetailsView.swift
+//  StaySafe
+//
+//  Created by Heet Patel on 06/03/2025.
+//
+
 import SwiftUI
 import MapKit
 
 struct ActivityDetailsView: View {
     let activity: Activity
     @StateObject private var locationViewModel = LocationViewModel()
+    @StateObject private var statusViewModel = StatusViewModel()
     @State private var region: MKCoordinateRegion?
     @State private var showCamera = false
     @State private var activityImageURL: URL?
+    @State private var selectedStatusID: Int?
+    @State private var isUpdatingStatus = false
 
     var body: some View {
         ScrollView {
@@ -32,7 +42,17 @@ struct ActivityDetailsView: View {
                     DetailRow(title: "Description", value: activity.description)
                     DetailRow(title: "Leave Time", value: formatDate(activity.leaveTime))
                     DetailRow(title: "Arrive Time", value: formatDate(activity.arriveTime))
-                    DetailRow(title: "Status", value: activity.statusName, isStatus: true)
+
+                    // Status Picker Section
+                    Picker("Status", selection: $selectedStatusID) {
+                        ForEach(statusViewModel.statuses, id: \.statusID) { status in
+                            Text(status.name).tag(status.statusID as Int?)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .onChange(of: selectedStatusID) { _ in
+                        updateActivityStatus()
+                    }
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -126,11 +146,47 @@ struct ActivityDetailsView: View {
         .navigationTitle("Activity Details")
         .onAppear {
             locationViewModel.fetchLocations()
+            statusViewModel.fetchStatuses()
+            selectedStatusID = activity.statusID
             loadImageForActivity()
         }
         .sheet(isPresented: $showCamera) {
             CameraView { capturedURL in
                 saveImageForActivity(imageURL: capturedURL)
+            }
+        }
+    }
+
+    // Function to update the activity status in the backend
+    private func updateActivityStatus() {
+        guard let newStatusID = selectedStatusID else { return }
+        
+        isUpdatingStatus = true
+        
+        let updatedActivity = Activity(
+            activityID: activity.activityID,
+            name: activity.name,
+            userID: activity.userID,
+            description: activity.description,
+            fromLocationID: activity.fromLocationID,
+            fromLocationName: activity.fromLocationName,
+            leaveTime: activity.leaveTime,
+            toLocationID: activity.toLocationID,
+            toLocationName: activity.toLocationName,
+            arriveTime: activity.arriveTime,
+            modeID: activity.modeID,
+            modeName: activity.modeName,
+            statusID: newStatusID,
+            statusName: statusViewModel.statuses.first(where: { $0.statusID == newStatusID })?.name ?? "Planned"
+        )
+
+        // Call ViewModel to update the activity
+        ActivityViewModel().updateActivity(activity: updatedActivity) { success, errorMessage in
+            DispatchQueue.main.async {
+                isUpdatingStatus = false
+                if !success {
+                    print("Error updating status: \(errorMessage ?? "Unknown error")")
+                }
             }
         }
     }

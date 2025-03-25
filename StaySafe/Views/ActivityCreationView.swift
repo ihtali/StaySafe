@@ -4,19 +4,16 @@
 //
 //  Created by Heet Patel on 06/03/2025.
 //
+
 import SwiftUI
 
 struct ActivityCreationView: View {
     @StateObject private var activityViewModel = ActivityViewModel()
     @StateObject private var locationViewModel = LocationViewModel()
-    @StateObject private var statusViewModel = StatusViewModel()
-    @StateObject private var modeViewModel = ModeViewModel() // ViewModel for travel modes
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var selectedFromLocationID: Int?
     @State private var selectedToLocationID: Int?
-    @State private var selectedStatusID: Int?
-    @State private var selectedModeID: Int?
     @State private var leaveDate = Date()
     @State private var arriveDate = Date()
     @State private var isSubmitting: Bool = false
@@ -32,7 +29,7 @@ struct ActivityCreationView: View {
 
             Section(header: Text("Select Locations")) {
                 Picker("From Location", selection: $selectedFromLocationID) {
-                    Text("Select a location").tag(nil as Int?)
+                    Text("Select a location").tag(nil as Int?) // Placeholder
                     ForEach(locationViewModel.locations, id: \.locationID) { location in
                         Text(location.name).tag(location.locationID as Int?)
                     }
@@ -51,24 +48,6 @@ struct ActivityCreationView: View {
                 DatePicker("Arrive Time", selection: $arriveDate, displayedComponents: [.date, .hourAndMinute])
             }
 
-            Section(header: Text("Select Status")) {
-                Picker("Status", selection: $selectedStatusID) {
-                    Text("Select a status").tag(nil as Int?)
-                    ForEach(statusViewModel.statuses, id: \.statusID) { status in
-                        Text(status.name).tag(status.statusID as Int?)
-                    }
-                }
-            }
-            
-            Section(header: Text("Select Mode of Travel")) {
-                Picker("Mode", selection: $selectedModeID) {
-                    Text("Select a mode").tag(nil as Int?)
-                    ForEach(modeViewModel.modes, id: \.modeID) { mode in
-                        Text(mode.name).tag(mode.modeID as Int?)
-                    }
-                }
-            }
-
             Button(action: submitActivity) {
                 HStack {
                     if isSubmitting {
@@ -82,8 +61,6 @@ struct ActivityCreationView: View {
         .navigationTitle("Create Activity")
         .onAppear {
             locationViewModel.fetchLocations()
-            statusViewModel.fetchStatuses()
-            modeViewModel.fetchModes() // Fetch available travel modes
         }
     }
 
@@ -100,9 +77,6 @@ struct ActivityCreationView: View {
     func submitActivity() {
         guard let fromLocationID = selectedFromLocationID,
               let toLocationID = selectedToLocationID,
-              let statusID = selectedStatusID,
-              let modeID = selectedModeID,
-              let mode = modeViewModel.modes.first(where: { $0.modeID == modeID }),
               !name.isEmpty,
               !description.isEmpty,
               let userID = Int(userSession.userID) else {
@@ -112,20 +86,20 @@ struct ActivityCreationView: View {
         isSubmitting = true
 
         let newActivity = Activity(
-            activityID: generateActivityID(), // Use the function to get an ID > 100
+            activityID: generateActivityID(),
             name: name,
             userID: userID,
             description: description,
             fromLocationID: fromLocationID,
             fromLocationName: "",
-            leaveTime: formatToISO8601(date: leaveDate), // Convert to correct format
+            leaveTime: formatToISO8601(date: leaveDate),
             toLocationID: toLocationID,
             toLocationName: "",
-            arriveTime: formatToISO8601(date: arriveDate), // Convert to correct format
-            modeID: mode.modeID, // Pass selected mode ID
-            modeName: mode.name, // Pass selected mode name
-            statusID: statusID,
-            statusName: ""
+            arriveTime: formatToISO8601(date: arriveDate),
+            modeID: 1, // Default to 1 (e.g., Walking)
+            modeName: "Walking",
+            statusID: 1, // Default status ID "Planned"
+            statusName: "Planned"
         )
 
         activityViewModel.createActivity(activity: newActivity) { success, errorMessage in
