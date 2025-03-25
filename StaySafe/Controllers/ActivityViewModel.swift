@@ -15,7 +15,7 @@ class ActivityViewModel: ObservableObject {
     private let imageStorageKey = "activityImages"
 
     func fetchActivities(for userID: Int) {
-        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities/users/\(userID)") else {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/activities/users/\(userID)") else {
             errorMessage = "Invalid URL"
             return
         }
@@ -71,7 +71,7 @@ class ActivityViewModel: ObservableObject {
     }
 
     func createActivity(activity: Activity, completion: @escaping (Bool, String?) -> Void) {
-        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities") else {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/activities") else {
             completion(false, "Invalid URL")
             return
         }
@@ -120,7 +120,7 @@ class ActivityViewModel: ObservableObject {
     }
     
     func deleteActivity(activityID: Int, completion: @escaping (Bool, String?) -> Void) {
-        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities/\(activityID)") else {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/activities/\(activityID)") else {
             completion(false, "Invalid URL")
             return
         }
@@ -160,7 +160,7 @@ class ActivityViewModel: ObservableObject {
     }
     
     func updateActivity(activity: Activity, completion: @escaping (Bool, String?) -> Void) {
-        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/activities/\(activity.activityID)") else {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/activities/\(activity.activityID)") else {
             completion(false, "Invalid URL")
             return
         }

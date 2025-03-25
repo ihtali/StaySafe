@@ -4,7 +4,7 @@ class StatusViewModel: ObservableObject {
     @Published var statuses: [Status] = []
 
     func fetchStatuses() {
-        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/status") else {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/status") else {
             print("Invalid URL")
             return
         }
