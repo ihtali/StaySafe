@@ -7,22 +7,21 @@
 import Foundation
 
 struct Position: Codable, Identifiable {
-    var id: Int { positionID } // Conform to Identifiable
-
-    let positionID: Int
-    let activityID: Int
-    let activityName: String
-    let latitude: Double
-    let longitude: Double
-    let timestamp: Int
+    var id: Int? { positionID } // ID can be nil when posting a new position
+    
+    let positionID: Int?
+    let positionActivityID: Int
+    let positionLatitude: Double
+    let positionLongitude: Double
+    let positionTimestamp: Int
+    let positionActivityName: String
 
     enum CodingKeys: String, CodingKey {
         case positionID = "PositionID"
-        case activityID = "PositionActivityID"
-        case activityName = "PositionActivityName"
-        case latitude = "PositionLatitude"
-        case longitude = "PositionLongitude"
-        case timestamp = "PositionTimestamp"
+        case positionActivityID = "PositionActivityID"
+        case positionLatitude = "PositionLatitude"
+        case positionLongitude = "PositionLongitude"
+        case positionTimestamp = "PositionTimestamp"
+        case positionActivityName = "PositionActivityName"
     }
 }
-
