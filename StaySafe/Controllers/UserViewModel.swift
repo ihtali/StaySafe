@@ -7,7 +7,7 @@ class UserViewModel: ObservableObject {
     @Published var users: [User] = []
     @Published var refreshTrigger = false // Forces UI update
 
-    private let baseURL = "https://softwarehub.uk/unibase/staysafe/v1/api"
+    private let baseURL = "https://softwarehub.uk/unibase/staysafe/v2/api"
 
     // Fetch a single user by ID
     func fetchUser(userID: String) {

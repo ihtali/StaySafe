@@ -11,7 +11,7 @@ class LocationViewModel: ObservableObject {
     @Published var locations: [Location] = []
 
     func fetchLocations() {
-        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v1/api/locations") else {
+        guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/locations") else {
             print("Invalid URL")
             return
         }
