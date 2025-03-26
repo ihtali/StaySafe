@@ -21,13 +21,31 @@ struct MapView: View {
             Map(coordinateRegion: $region, annotationItems: viewModel.contacts) { contact in
                 MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: contact.userLatitude, longitude: contact.userLongitude)) {
                     VStack(spacing: 4) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 30))
-                            .foregroundColor(.blue)
-                            .background(Color.white.opacity(0.9))
-                            .clipShape(Circle())
-                            .shadow(radius: 3)
+                        // Contact Image
+                        if let imageUrl = contact.userImage, let url = URL(string: imageUrl) {
+                            AsyncImage(url: url) { image in
+                                image.resizable()
+                                    .scaledToFill()
+                                    .frame(width: 40, height: 40)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                                    .shadow(radius: 3)
+                            } placeholder: {
+                                Image(systemName: "person.circle.fill")
+                                    .resizable()
+                                    .frame(width: 40, height: 40)
+                                    .foregroundColor(.gray)
+                                    .background(Circle().fill(Color.white))
+                            }
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.gray)
+                                .background(Circle().fill(Color.white))
+                        }
 
+                        // Contact Name
                         Text(contact.userFirstName)
                             .font(.system(size: 12, weight: .medium, design: .rounded))
                             .foregroundColor(.white)
@@ -72,7 +90,6 @@ struct MapView: View {
         }
     }
 
-    // Function to calculate the average location
     private func updateRegion() {
         guard !viewModel.contacts.isEmpty else { return }
 
@@ -81,7 +98,7 @@ struct MapView: View {
 
         region = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: avgLatitude, longitude: avgLongitude),
-            span: MKCoordinateSpan(latitudeDelta: 5, longitudeDelta: 5) // Adjust zoom level
+            span: MKCoordinateSpan(latitudeDelta: 5, longitudeDelta: 5)
         )
     }
 }
