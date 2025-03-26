@@ -10,8 +10,10 @@ import MapKit
 
 struct ActivityDetailsView: View {
     let activity: Activity
+    @ObservedObject var locationManager = LocationManager()
     @StateObject private var locationViewModel = LocationViewModel()
     @StateObject private var statusViewModel = StatusViewModel()
+    @StateObject private var positionViewModel = PositionViewModel()
     @State private var region: MKCoordinateRegion?
     @State private var showCamera = false
     @State private var activityImageURL: URL?
@@ -44,15 +46,28 @@ struct ActivityDetailsView: View {
                     DetailRow(title: "Arrive Time", value: formatDate(activity.arriveTime))
 
                     // Status Picker Section
+                    // Status Picker Section
                     Picker("Status", selection: $selectedStatusID) {
                         ForEach(statusViewModel.statuses, id: \.statusID) { status in
                             Text(status.name).tag(status.statusID as Int?)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .onChange(of: selectedStatusID) { _ in
+                    .onChange(of: selectedStatusID) { newValue in
                         updateActivityStatus()
+                        
+                        if let newStatusID = newValue {
+                            if let startStatus = statusViewModel.statuses.first(where: { $0.name.lowercased() == "started" }),
+                               newStatusID == startStatus.statusID {
+                                startPostingPosition()
+                            }
+                            else if let stopStatus = statusViewModel.statuses.first(where: { ["paused", "cancelled", "completed"].contains($0.name.lowercased()) }),
+                                    newStatusID == stopStatus.statusID {
+                                stopPostingPosition()
+                            }
+                        }
                     }
+
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -157,6 +172,19 @@ struct ActivityDetailsView: View {
         }
     }
 
+    // Function to start posting positions
+    private func startPostingPosition() {
+        guard let userLocation = locationManager.location else {
+            print("User location not available")
+            return
+        }
+        positionViewModel.startPostingLocation(for: activity.activityID, name: activity.name, locationManager: locationManager)
+    }
+
+    // Function to stop posting positions
+    private func stopPostingPosition() {
+        positionViewModel.stopPostingLocation()
+    }
     // Function to update the activity status in the backend
     private func updateActivityStatus() {
         guard let newStatusID = selectedStatusID else { return }

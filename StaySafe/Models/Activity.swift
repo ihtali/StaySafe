@@ -40,4 +40,5 @@ struct Activity: Codable, Identifiable {
         case statusID = "ActivityStatusID"
         case statusName = "ActivityStatusName"
     }
+    
 }
