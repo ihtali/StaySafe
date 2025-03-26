@@ -12,7 +12,7 @@ class PositionViewModel: ObservableObject {
     @Published var isPosting = false
     @Published var positions: [Position] = []
     private var timer: Timer?
-    
+
     func startPostingLocation(for activityID: Int, name: String, locationManager: LocationManager) {
         stopPostingLocation() // Ensure no duplicate timers
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
@@ -71,7 +71,7 @@ class PositionViewModel: ObservableObject {
         }.resume()
     }
 
-    // Fetches all positions for a given activity ID
+    /// Fetches all positions for a given activity ID
     func fetchPositions(for activityID: Int) {
         guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/positions/activities/\(activityID)") else {
             print("Invalid URL")
