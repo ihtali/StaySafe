@@ -14,6 +14,7 @@ struct ActivityDetailsView: View {
     @StateObject private var locationViewModel = LocationViewModel()
     @StateObject private var statusViewModel = StatusViewModel()
     @StateObject private var positionViewModel = PositionViewModel()
+    @StateObject private var activityDetectionManager = ActivityDetectionManager() // Added this line
     @State private var region: MKCoordinateRegion?
     @State private var showCamera = false
     @State private var activityImageURL: URL?
@@ -44,8 +45,9 @@ struct ActivityDetailsView: View {
                     DetailRow(title: "Description", value: activity.description)
                     DetailRow(title: "Leave Time", value: formatDate(activity.leaveTime))
                     DetailRow(title: "Arrive Time", value: formatDate(activity.arriveTime))
+                    DetailRow(title: "Current Mode", value: activityDetectionManager.detectedActivity)
 
-                    // Status Picker Section
+
                     // Status Picker Section
                     Picker("Status", selection: $selectedStatusID) {
                         ForEach(statusViewModel.statuses, id: \.statusID) { status in
@@ -57,17 +59,20 @@ struct ActivityDetailsView: View {
                         updateActivityStatus()
                         
                         if let newStatusID = newValue {
+                            // Handle start status
                             if let startStatus = statusViewModel.statuses.first(where: { $0.name.lowercased() == "started" }),
                                newStatusID == startStatus.statusID {
                                 startPostingPosition()
+                                activityDetectionManager.startActivityDetection() // Start activity detection
                             }
+                            // Handle stop statuses
                             else if let stopStatus = statusViewModel.statuses.first(where: { ["paused", "cancelled", "completed"].contains($0.name.lowercased()) }),
                                     newStatusID == stopStatus.statusID {
                                 stopPostingPosition()
+                                activityDetectionManager.stopActivityDetection() // Stop activity detection
                             }
                         }
                     }
-
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -185,6 +190,7 @@ struct ActivityDetailsView: View {
     private func stopPostingPosition() {
         positionViewModel.stopPostingLocation()
     }
+
     // Function to update the activity status in the backend
     private func updateActivityStatus() {
         guard let newStatusID = selectedStatusID else { return }
