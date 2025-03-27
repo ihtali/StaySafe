@@ -100,3 +100,4 @@ class PositionViewModel: ObservableObject {
         }.resume()
     }
 }
+/// fetch that code in activity detail view to show the tracking of the user while he walk they need to displaye a path like lines so it must neeed to displau on map as well
