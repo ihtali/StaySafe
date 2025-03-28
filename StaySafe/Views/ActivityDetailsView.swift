@@ -117,36 +117,11 @@ struct ActivityDetailsView: View {
                             .font(.headline)
                             .foregroundColor(.primary)
 
-                        Map(
-                            coordinateRegion: Binding(
-                                get: { region ?? MKCoordinateRegion(
-                                    center: CLLocationCoordinate2D(
-                                        latitude: (fromLocation.latitude + toLocation.latitude) / 2,
-                                        longitude: (fromLocation.longitude + toLocation.longitude) / 2
-                                    ),
-                                    span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-                                ) },
-                                set: { region = $0 }
-                            ),
-                            annotationItems: [fromLocation, toLocation]
-                        ) { location in
-                            MapAnnotation(coordinate: CLLocationCoordinate2D(
-                                latitude: location.latitude,
-                                longitude: location.longitude
-                            )) {
-                                VStack {
-                                    Text(location.name)
-                                        .font(.caption)
-                                        .padding(5)
-                                        .background(Color.white)
-                                        .cornerRadius(5)
-                                        .shadow(radius: 3)
-                                    Image(systemName: "mappin.circle.fill")
-                                        .foregroundColor(location.locationID == activity.fromLocationID ? .green : .blue)
-                                        .font(.title)
-                                }
-                            }
-                        }
+                        MapViewRepresentable(
+                            fromLocation: CLLocationCoordinate2D(latitude: fromLocation.latitude, longitude: fromLocation.longitude),
+                            toLocation: CLLocationCoordinate2D(latitude: toLocation.latitude, longitude: toLocation.longitude),
+                            positions: positionViewModel.positions.map { CLLocationCoordinate2D(latitude: $0.positionLatitude, longitude: $0.positionLongitude) }
+                        )
                         .frame(height: 250)
                         .cornerRadius(12)
                         .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 3)
@@ -168,6 +143,7 @@ struct ActivityDetailsView: View {
             locationViewModel.fetchLocations()
             statusViewModel.fetchStatuses()
             selectedStatusID = activity.statusID
+            positionViewModel.fetchPositions(for: activity.activityID)
             loadImageForActivity()
         }
         .sheet(isPresented: $showCamera) {
@@ -262,3 +238,4 @@ struct ActivityDetailsView: View {
         UserDefaults.standard.setValue(imageURL.absoluteString, forKey: "activityImage_\(activity.activityID)")
     }
 }
+

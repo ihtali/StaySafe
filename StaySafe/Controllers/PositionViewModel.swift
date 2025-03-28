@@ -13,6 +13,7 @@ class PositionViewModel: ObservableObject {
     @Published var positions: [Position] = []
     private var timer: Timer?
 
+    
     func startPostingLocation(for activityID: Int, name: String, locationManager: LocationManager) {
         stopPostingLocation() // Ensure no duplicate timers
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
