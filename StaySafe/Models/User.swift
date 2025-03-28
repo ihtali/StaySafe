@@ -10,7 +10,7 @@ struct User: Codable, Identifiable, Equatable {
     let longitude: Double
     let imageURL: String?
     let username: String
-    var password: String? // Make this mutable
+    var password: String? 
     let timestamp: Int
 
     enum CodingKeys: String, CodingKey {

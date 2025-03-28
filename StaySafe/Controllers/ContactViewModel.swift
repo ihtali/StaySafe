@@ -13,9 +13,7 @@ class ContactViewModel: ObservableObject {
 
     func fetchContacts(userID: String) {
         guard let url = URL(string: "https://softwarehub.uk/unibase/staysafe/v2/api/users/contacts/\(userID)") else {
-            DispatchQueue.main.async {
-                self.errorMessage = "Invalid URL"
-            }
+            self.errorMessage = "Invalid URL"
             return
         }
 

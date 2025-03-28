@@ -19,8 +19,8 @@ struct Activity: Codable, Identifiable {
     let toLocationID: Int
     let toLocationName: String
     let arriveTime: String
-    let modeID: Int
-    let modeName: String
+    let modeID: Int?
+    let modeName: String?
     let statusID: Int
     let statusName: String
     
